@@ -1,10 +1,9 @@
 // src/app/api/validate/route.ts
 import { NextResponse } from 'next/server'
-import OpenAI from 'openai'
+import Anthropic from '@anthropic-ai/sdk'
 
-// Fallback to avoid crashing if key is missing during build/dev
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY || 'dummy_key',
+const anthropic = new Anthropic({
+    apiKey: process.env.ANTHROPIC_API_KEY || 'dummy_key',
 })
 
 export async function POST(request: Request) {
@@ -15,38 +14,42 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
         }
 
-        if (!process.env.OPENAI_API_KEY) {
+        if (!process.env.ANTHROPIC_API_KEY) {
             return NextResponse.json(
-                { success: false, feedback: "Developer mode: OpenAI API key is not configured in .env.local yet." },
+                { success: false, feedback: "Developer mode: Anthropic API key is not configured in .env.local yet." },
                 { status: 200 }
             )
         }
 
         const prompt = `
-      You are an expert evaluator for an AI Workflow platform.
-      
-      EXPECTED OUTCOME:
-      "${expectedOutcome}"
+        <role>You are a precise evaluator for an AI Workflow platform.</role>
+        
+        <goal>Determine if the user's result matches the expected outcome.</goal>
+        
+        <context>
+            <expected_outcome>${expectedOutcome}</expected_outcome>
+            <user_result>${userResult}</user_result>
+        </context>
 
-      USER'S ACTUAL RESULT:
-      "${userResult}"
+        <instructions>
+            Analyze if the user's result successfully achieves the expected outcome.
+            Respond ONLY with a valid JSON object matching this schema:
+            {
+              "success": boolean,
+              "feedback": "A short, encouraging 1-sentence explanation of why it passed, OR what is missing/wrong."
+            }
+        </instructions>
+        `
 
-      Does the user's result successfully achieve the expected outcome?
-      Respond ONLY with a valid JSON object matching this schema:
-      {
-        "success": boolean,
-        "feedback": "A short, encouraging 1-sentence explanation of why it passed, OR what is missing/wrong."
-      }
-    `
-
-        const response = await openai.chat.completions.create({
-            model: 'gpt-4o-mini',
+        const response = await anthropic.messages.create({
+            model: 'claude-3-5-sonnet-20241022',
+            max_tokens: 1024,
             messages: [{ role: 'user', content: prompt }],
-            response_format: { type: 'json_object' },
             temperature: 0.1,
         })
 
-        const result = JSON.parse(response.choices[0].message.content || '{}')
+        const content = response.content[0].type === 'text' ? response.content[0].text : ''
+        const result = JSON.parse(content || '{}')
         return NextResponse.json(result)
 
     } catch (error) {

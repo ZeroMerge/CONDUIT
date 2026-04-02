@@ -9,14 +9,6 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      borderRadius: {
-        none: '0',
-        sm: '2px',
-        DEFAULT: '4px',
-        md: '6px',
-        lg: '8px',
-        full: '9999px',
-      },
       fontFamily: {
         geist: ['var(--font-geist)', 'system-ui', 'sans-serif'],
         'dm-sans': ['var(--font-dm-sans)', 'system-ui', 'sans-serif'],

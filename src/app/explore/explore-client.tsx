@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { Trophy, Clock, Zap } from 'lucide-react'
+import { Trophy, Clock } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
 import { FlowCard } from '@/components/flow-card'
 import { CategoryFilter } from '@/components/category-filter'
@@ -28,6 +28,7 @@ export function ExploreClient({ flows, globalTimeSavedMinutes: initialMinutes }:
     }
     fetchLeaderboard()
 
+    // Realtime-ish updates for global ticker (every 30s)
     const interval = setInterval(async () => {
       const { data, error } = await supabase.rpc('get_global_time_saved' as any)
       if (!error && typeof data === 'number') {
@@ -40,109 +41,118 @@ export function ExploreClient({ flows, globalTimeSavedMinutes: initialMinutes }:
 
   const filteredFlows = useMemo(() => {
     let result = [...flows]
-    if (activeCategory !== 'all') result = result.filter((f) => f.category === activeCategory)
+    
+    // Category filter
+    if (activeCategory !== 'all') {
+      result = result.filter((f) => f.category === activeCategory)
+    }
+
+    // Search query
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase()
-      result = result.filter(f => f.title.toLowerCase().includes(query) || f.description.toLowerCase().includes(query))
+      result = result.filter(f => 
+        f.title.toLowerCase().includes(query) || 
+        f.description.toLowerCase().includes(query)
+      )
     }
+
+    // Sorting
     switch (sortBy) {
-      case 'popular': result.sort((a, b) => b.like_count - a.like_count); break;
-      case 'completed': result.sort((a, b) => b.completion_count - a.completion_count); break;
-      case 'newest': result.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()); break;
+      case 'popular':
+        result.sort((a, b) => b.like_count - a.like_count)
+        break
+      case 'completed':
+        result.sort((a, b) => b.completion_count - a.completion_count)
+        break
+      case 'newest':
+        result.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+        break
     }
+
     return result
   }, [flows, activeCategory, searchQuery, sortBy])
 
   return (
-    <div className="max-w-[1120px] mx-auto px-6 py-8">
-      {/* Global ROI Ticker Hero */}
-      <div className="relative overflow-hidden rounded-md bg-[#0a0a0a] border border-[#1a1a1a] px-12 py-20 mb-16 text-center">
-        {/* Decorative Grid */}
-        <div className="absolute inset-0 opacity-[0.02] pointer-events-none" style={{ backgroundImage: 'radial-gradient(var(--text-primary) 1.5px, transparent 1.5px)', backgroundSize: '32px 32px' }} />
-        
-        <div className="relative z-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[var(--accent-subtle)] border border-[var(--accent-border)] text-[var(--accent-text)] text-[10px] font-bold uppercase tracking-widest mb-8 animate-pulse">
-            <Zap className="h-3 w-3" /> Global Efficiency Movement
-          </div>
-          
-          <h1 className="text-5xl md:text-7xl font-semibold tracking-tighter text-[var(--text-primary)] mb-8">
-            <span className="tabular-nums transition-all duration-700">{(liveMinutes / 60).toFixed(1)}</span> <span className="text-[var(--text-secondary)]">HOURS SAVED</span>
-          </h1>
-          
-          <p className="max-w-xl mx-auto text-sm text-[var(--text-secondary)] leading-relaxed font-medium">
-            Every run on Conduit reduces the human workload. We are collectively reclaiming time using verified AI workflows.
-          </p>
-        </div>
-      </div>
-
-      <div className="flex items-center justify-between">
+    <div className="max-w-6xl mx-auto px-6 py-8">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
         <div>
-          <h2 className="text-xl font-semibold tracking-tight text-[var(--text-primary)]">Discovery</h2>
-          <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-tertiary)] mt-1">{filteredFlows.length} verified flows</p>
+          <h1 className="text-3xl font-bold tracking-tight text-[var(--text-primary)]">Explore Workflows</h1>
+          <p className="text-[var(--text-secondary)] mt-2">Discover verified AI workflows to automate your day.</p>
         </div>
-      </div>
-
-      <div className="sticky top-14 z-40 bg-[var(--bg-primary)]/80 backdrop-blur-md border-b border-[#1a1a1a] py-4 mt-8">
-        <div className="flex flex-col sm:flex-row gap-6">
-          <CategoryFilter activeCategory={activeCategory} />
-          <div className="flex gap-3">
-            <select value={sortBy} onChange={(e) => setSortBy(e.target.value as any)} className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-md px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest text-[var(--text-primary)] outline-none focus:border-[var(--accent)] transition-colors cursor-pointer">
-              <option value="popular">Popular</option>
-              <option value="completed">Completed</option>
-              <option value="newest">Newest</option>
-            </select>
-            <input type="text" placeholder="Filter flows..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-md px-4 py-1.5 text-xs outline-none w-full sm:w-64 focus:border-[var(--accent)] transition-all" />
+        
+        <div className="flex items-center gap-6 bg-[var(--bg-secondary)] border border-[var(--border)] rounded px-6 py-4">
+          <div className="flex items-center gap-3">
+            <Clock className="h-5 w-5 text-[var(--accent)]" />
+            <div>
+              <p className="text-2xl font-bold text-[var(--text-primary)] tabular-nums">
+                {Math.floor(liveMinutes / 60).toLocaleString()}
+              </p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-tertiary)]">Global Hours Saved</p>
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-8 mt-6">
-        {/* Flow Grid */}
-        <div className="flex-1">
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-            {filteredFlows.map((flow) => <FlowCard key={flow.id} flow={flow} />)}
+      <div className="flex flex-col lg:flex-row gap-10">
+        <div className="flex-1 min-w-0">
+          <div className="flex flex-col sm:flex-row gap-4 mb-8">
+            <div className="flex-1">
+              <input
+                type="text"
+                placeholder="Search workflows..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full bg-[var(--bg-primary)] border border-[var(--border)] rounded px-4 py-2 text-sm outline-none focus:border-[var(--accent)] transition-colors"
+              />
+            </div>
+            <div className="flex gap-2">
+              <CategoryFilter activeCategory={activeCategory} />
+              <select 
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as any)}
+                className="bg-[var(--bg-primary)] border border-[var(--border)] rounded px-3 py-2 text-sm outline-none focus:border-[var(--accent)] transition-colors cursor-pointer"
+              >
+                <option value="popular">Popular</option>
+                <option value="completed">Completed</option>
+                <option value="newest">Newest</option>
+              </select>
+            </div>
           </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+            {filteredFlows.map((flow) => (
+              <FlowCard key={flow.id} flow={flow} />
+            ))}
+          </div>
+
           {filteredFlows.length === 0 && (
-            <div className="text-center py-16"><p className="text-[var(--text-tertiary)]">No flows found</p></div>
+            <div className="text-center py-20">
+              <p className="text-[var(--text-secondary)]">No workflows found matching your criteria.</p>
+            </div>
           )}
         </div>
 
-        {/* Sidebar Leaderboard */}
-        <div className="w-full lg:w-[320px] flex-shrink-0 space-y-8">
-          <div className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-md p-6 relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-emerald-400 to-emerald-600" />
-            <div className="flex justify-between items-start mb-4">
-              <div className="flex items-center gap-2">
-                 <Clock className="h-4 w-4 text-[var(--accent)]" />
-                 <h3 className="text-[10px] font-bold uppercase tracking-[0.1em] text-[var(--text-tertiary)]">Global Impact</h3>
-              </div>
-            </div>
-            
-            <p className="text-3xl font-semibold tracking-tight text-[var(--text-primary)] mt-3 text-center lg:text-left transition-all duration-700">
-              {Math.floor(liveMinutes / 60).toLocaleString()} <span className="text-lg text-[var(--text-secondary)]">HOURS</span>
-            </p>
-            <p className="text-[11px] text-[var(--text-tertiary)] mt-3 leading-relaxed font-medium">Saved by Conduit users globally using verified AI workflows.</p>
-          </div>
-
-          <div className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-md p-6 sticky top-40">
-            <div className="flex items-center gap-2 mb-6">
-              <Trophy className="h-4 w-4 text-emerald-500" />
-              <h3 className="text-[10px] font-bold uppercase tracking-[0.1em] text-[var(--text-tertiary)]">Top Builders</h3>
-            </div>
-            <div className="space-y-5">
+        <aside className="w-full lg:w-[300px] flex-shrink-0 space-y-8">
+          <div>
+            <h2 className="text-xs font-bold uppercase tracking-widest text-[var(--text-tertiary)] mb-4">Top Builders</h2>
+            <div className="bg-[var(--bg-secondary)] border border-[var(--border)] rounded divide-y divide-[var(--border)]">
               {leaderboard.map((user, index) => (
-                <Link key={user.id} href={`/profile/${user.username}`} className="flex items-center gap-4 group">
-                  <span className="text-[10px] font-bold text-[var(--text-tertiary)] w-3">{index + 1}</span>
-                  <Avatar seed={user.avatar_seed} size={36} verified={(user.total_xp || 0) >= 1000} />
+                <Link 
+                  key={user.id} 
+                  href={`/profile/${user.username}`}
+                  className="flex items-center gap-3 p-4 hover:bg-[var(--bg-tertiary)] transition-colors group"
+                >
+                  <span className="text-xs font-bold text-[var(--text-tertiary)] w-4">{index + 1}</span>
+                  <Avatar seed={user.avatar_seed} size={32} verified={(user.total_xp || 0) >= 1000} />
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-bold text-[var(--text-primary)] group-hover:text-[var(--accent)] transition-colors truncate">{user.username}</p>
-                    <p className="text-[10px] text-[var(--accent)] font-bold uppercase tracking-wider">{user.total_xp || 0} XP</p>
+                    <p className="text-sm font-medium text-[var(--text-primary)] truncate group-hover:text-[var(--accent)] transition-colors">{user.username}</p>
+                    <p className="text-xs text-[var(--accent)] font-medium">{user.total_xp || 0} XP</p>
                   </div>
                 </Link>
               ))}
             </div>
           </div>
-        </div>
+        </aside>
       </div>
     </div>
   )

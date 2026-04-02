@@ -12,6 +12,7 @@ export interface Profile {
   is_admin?: boolean
   is_verified?: boolean
   trust_score?: number
+  avatar_bg_color?: string
 }
 
 export interface Flow {
