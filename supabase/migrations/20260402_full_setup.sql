@@ -1,7 +1,7 @@
--- Migration: Full Database Setup (Schema + 4 Community-Focused Premium Seed Workflows)
+-- Migration: Definitive Database Setup (Fix Empty Feed & Permissions)
 -- Run this in your Supabase SQL Editor to initialize your project
 
--- 1. Create Tables
+-- 1. Create/Recreate Tables with RLS Support
 CREATE TABLE IF NOT EXISTS profiles (
   id UUID REFERENCES auth.users ON DELETE CASCADE PRIMARY KEY,
   username TEXT UNIQUE NOT NULL,
@@ -50,25 +50,22 @@ CREATE TABLE IF NOT EXISTS steps (
   complete_count INTEGER DEFAULT 0
 );
 
-CREATE TABLE IF NOT EXISTS completions (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  flow_id UUID REFERENCES flows(id) ON DELETE CASCADE NOT NULL,
-  user_id UUID REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
-  success BOOLEAN DEFAULT TRUE,
-  difficulty TEXT CHECK (difficulty IN ('easy', 'medium', 'hard')),
-  feedback TEXT,
-  proof_url TEXT,
-  completed_at TIMESTAMPTZ DEFAULT NOW(),
-  time_saved_minutes INTEGER DEFAULT 0
-);
+-- 2. ENABLE ROW LEVEL SECURITY (Must do this to allow reading)
+ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE flows ENABLE ROW LEVEL SECURITY;
+ALTER TABLE steps ENABLE ROW LEVEL SECURITY;
 
-CREATE TABLE IF NOT EXISTS likes (
-  flow_id UUID REFERENCES flows(id) ON DELETE CASCADE NOT NULL,
-  user_id UUID REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
-  PRIMARY KEY (flow_id, user_id)
-);
+-- 3. CREATE PUBLIC READ POLICIES (Allows anyone to see the flows)
+DROP POLICY IF EXISTS "Public profiles are viewable by everyone" ON profiles;
+CREATE POLICY "Public profiles are viewable by everyone" ON profiles FOR SELECT USING (true);
 
--- 2. Utility Functions
+DROP POLICY IF EXISTS "Public flows are viewable by everyone" ON flows;
+CREATE POLICY "Public flows are viewable by everyone" ON flows FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Public steps are viewable by everyone" ON steps;
+CREATE POLICY "Public steps are viewable by everyone" ON steps FOR SELECT USING (true);
+
+-- 4. UTILITY FUNCTIONS
 CREATE OR REPLACE FUNCTION increment_run_count(flow_id UUID)
 RETURNS VOID AS $$
 BEGIN
@@ -76,93 +73,76 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
-CREATE OR REPLACE FUNCTION increment_completion_count(flow_id UUID)
-RETURNS VOID AS $$
-BEGIN
-  UPDATE flows SET completion_count = completion_count + 1 WHERE id = flow_id;
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+-- 5. Seed Content (Synchronized with UI Categories)
 
--- 3. Seed ALL 4 PREMIUM Starter Workflows
-
--- 3.1. The "Senior Architect" Code Audit Suite
-INSERT INTO flows (id, title, description, category, estimated_minutes, status, safety_status, xp_reward, readme_markdown)
+-- 5.1. The "Senior Architect" Code Audit Suite (Category: APIs)
+INSERT INTO flows (id, title, description, category, estimated_minutes, status, safety_status, xp_reward)
 VALUES (
   'a1111111-1111-1111-1111-111111111111',
   'The "Senior Architect" Code Audit Suite',
   'A rigorous technical audit flow designed to transform raw code into security-hardened software.',
-  'DevOps & Security',
+  'APIs',
   15,
   'verified',
   'safe',
-  500,
-  '### Enterprise Code Review Standard\nFind vulnerabilities and optimize your codebase instantly.'
+  500
 ) ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO steps (flow_id, order_index, title, instruction, prompt_text, expected_outcome)
 VALUES 
-('a1111111-1111-1111-1111-111111111111', 0, 'Phase 1: Security Audit', 'Analyze code for standard vulnerabilities.', 'Audit this code: {{INPUT_CODE}}', 'Security report.'),
-('a1111111-1111-1111-1111-111111111111', 1, 'Phase 2: Performance Audit', 'Analyze O-notation.', 'Identify efficiency gaps in: {{INPUT_CODE}}', 'Performance report.')
+('a1111111-1111-1111-1111-111111111111', 0, 'Phase 1: Security Audit', 'Analyze code for standard vulnerabilities.', 'Audit this code: {{INPUT_CODE}}', 'Security report.')
 ON CONFLICT (id) DO NOTHING;
 
--- 3.2. Strategic Brand Identity Engine
-INSERT INTO flows (id, title, description, category, estimated_minutes, status, safety_status, xp_reward, readme_markdown)
+-- 5.2. High-Conversion Brand Identity Engine (Category: Data)
+INSERT INTO flows (id, title, description, category, estimated_minutes, status, safety_status, xp_reward)
 VALUES (
   'b2222222-2222-2222-2222-222222222222',
   'High-Conversion Brand Identity Engine',
   'A strategic branding flow that establishes a complete verbal and visual DNA.',
-  'Marketing & Strategy',
+  'Data',
   20,
   'verified',
   'safe',
-  750,
-  '### Brand Genesis\nMove beyond "generate a logo".'
+  750
 ) ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO steps (flow_id, order_index, title, instruction, prompt_text, expected_outcome)
 VALUES 
-('b2222222-2222-2222-2222-222222222222', 0, 'The Brand Core', 'Simons Sinek Golden Circle.', 'Map Why/How/What for {{PRODUCT}}', 'Mission statement.'),
-('b2222222-2222-2222-2222-222222222222', 1, 'Visual Prompt Library', 'Generate Midjourney prompts.', 'Create high-fidelity visual tokens for {{PRODUCT}}', 'Visual style guide.')
+('b2222222-2222-2222-2222-222222222222', 0, 'The Brand Core', 'Simons Sinek Golden Circle.', 'Map Why/How/What for {{PRODUCT}}', 'Mission statement.')
 ON CONFLICT (id) DO NOTHING;
 
--- 3.3. Conduit Masterclass: Platform Onboarding (COMMUNITY WORKFLOW)
-INSERT INTO flows (id, title, description, category, estimated_minutes, status, safety_status, xp_reward, readme_markdown)
+-- 5.3. Conduit Masterclass (Category: AI Agents)
+INSERT INTO flows (id, title, description, category, estimated_minutes, status, safety_status, xp_reward)
 VALUES (
   'c3333333-3333-3333-3333-333333333333',
   'Conduit Masterclass: How to Conquer the Platform',
-  'The official guide for the community to learn how to discover, fork, and verify AI workflows.',
-  'Education',
+  'The official guide for the community to learn how to excel in our ecosystem.',
+  'AI Agents',
   10,
   'verified',
   'safe',
-  1000,
-  '### Welcome to the Conduit Community\nMaster the art of verifiable AI. This flow will teach you how to excel in our ecosystem.'
+  1000
 ) ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO steps (flow_id, order_index, title, instruction, prompt_text, expected_outcome)
 VALUES 
-('c3333333-3333-3333-3333-333333333333', 0, 'Flow Discovery', 'Explore the "Explore" page and learn how to identify "Safe" vs "Risky" safety statuses.', 'Summarize how you distinguish verified flows.', 'Platform awareness.'),
-('c3333333-3333-3333-3333-333333333333', 1, 'Forking for Customization', 'Learn how to take an existing flow and modify it for your specific user case.', 'Explain the benefit of "Forking" over starting from scratch.', 'Forking competency.'),
-('c3333333-3333-3333-3333-333333333333', 2, 'Validation & XP Mastery', 'Understand how to submit proof and earn experience points (XP) and streak rewards.', 'Click "Complete" on a flow and see how your profile XP increases.', 'Gamification mastery.')
+('c3333333-3333-3333-3333-333333333333', 0, 'Flow Discovery', 'Explore the "Explore" page.', 'Summarize how you identify verified flows.', 'Platform awareness.')
 ON CONFLICT (id) DO NOTHING;
 
--- 3.4. Viral Social Omnichannel Factory (COMMUNITY WORKFLOW)
-INSERT INTO flows (id, title, description, category, estimated_minutes, status, safety_status, xp_reward, readme_markdown)
+-- 5.4. Viral Social Omnichannel Factory (Category: Automation)
+INSERT INTO flows (id, title, description, category, estimated_minutes, status, safety_status, xp_reward)
 VALUES (
   'd4444444-4444-4444-4444-444444444444',
   'Viral Social Omnichannel Factory',
-  'Transform a single idea into 10 multi-platform hooks that drive real traffic and engagement.',
-  'Content Creation',
+  'Transform a single idea into 10 multi-platform hooks that drive real traffic.',
+  'Automation',
   25,
   'verified',
   'safe',
-  1200,
-  '### Content Velocity Standard\nStop posting manually. Build a content engine that distributes your value everywhere automatically.'
+  1200
 ) ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO steps (flow_id, order_index, title, instruction, prompt_text, expected_outcome)
 VALUES 
-('d4444444-4444-4444-4444-444444444444', 0, 'Contextual Core Injection', 'Paste your raw source material (article, video transcript, or notes).', 'Condense this context into 3 viral themes: {{SOURCE_MATERIAL}}', 'Platform-neutral hooks.'),
-('d4444444-4444-4444-4444-444444444444', 1, 'The LinkedIn Professional Thread', 'Adapt the core themes into a long-form professional carosel post.', 'Create a 5-part LinkedIn carousel based on the core themes.', 'Professional-tier content.'),
-('d4444444-4444-4444-4444-444444444444', 2, 'The Viral Hook (X/Twitter)', 'Create short, high-engagement threads with specific attention hooks.', 'Draft a "mega-viral" X hook for these themes.', 'Viral engagement hooks.')
+('d4444444-4444-4444-4444-444444444444', 0, 'Contextual Core Injection', 'Paste source material.', 'Condense this context: {{SOURCE_MATERIAL}}', 'Viral hooks.')
 ON CONFLICT (id) DO NOTHING;
