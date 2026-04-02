@@ -5,8 +5,8 @@ import { resend } from '@/lib/resend';
 export async function GET(request: Request) {
   const authHeader = request.headers.get('authorization');
   
-  // Secure the endpoint using the CRON_SECRET from your .env.local
-  if (process.env.NODE_ENV === 'production' && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  // Secure the endpoint: check for the CRON_SECRET and matching Authorization header.
+  if (!process.env.CRON_SECRET || authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
