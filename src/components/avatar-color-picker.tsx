@@ -5,13 +5,14 @@ import { Check } from 'lucide-react'
 
 const AVATAR_COLORS = [
   { name: 'Transparent', value: 'transparent' },
-  { name: 'Slate', value: '#f1f5f9' },
-  { name: 'Rose', value: '#fff1f2' },
-  { name: 'Blue', value: '#eff6ff' },
-  { name: 'Amber', value: '#fffbeb' },
-  { name: 'Emerald', value: '#ecfdf5' },
-  { name: 'Violet', value: '#f5f3ff' },
-  { name: 'Zinc', value: '#fafafa' },
+  { name: 'Midnight', value: '#1e293b' },
+  { name: 'Candy', value: '#e11d48' },
+  { name: 'Ocean', value: '#2563eb' },
+  { name: 'Amber', value: '#d97706' },
+  { name: 'Emerald', value: '#059669' },
+  { name: 'Indigo', value: '#4f46e5' },
+  { name: 'Violet', value: '#7c3aed' },
+  { name: 'Coal', value: '#09090b' },
 ]
 
 interface AvatarColorPickerProps {

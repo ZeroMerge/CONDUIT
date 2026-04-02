@@ -26,14 +26,23 @@ export function ProfileEditTrigger({ profile }: ProfileEditTriggerProps) {
 
   if (!isOwner) return null
 
+  const isIncomplete = !profile.bio || profile.bio.length < 5
+  
   return (
     <>
       <button
         onClick={() => setShowModal(true)}
-        className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-[var(--border)] rounded-xl hover:bg-[var(--bg-secondary)] transition-all shadow-sm"
+        className={`group flex items-center gap-2 px-6 py-2.5 text-sm font-bold rounded-full transition-all duration-300 shadow-sm hover:shadow-md active:scale-95 ${
+          isIncomplete
+          ? 'bg-[var(--accent)] text-white hover:bg-[var(--accent-hover)] ring-2 ring-[var(--accent-subtle)] animate-[subtle-pulse_3s_infinite]'
+          : 'bg-[var(--bg-secondary)] text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)] border border-[var(--border-strong)]'
+        }`}
       >
-        <Edit2 className="h-4 w-4 text-[var(--accent)]" /> 
-        Edit Profile
+        <Edit2 className={`h-4 w-4 transition-transform group-hover:rotate-12 ${isIncomplete ? 'text-white' : 'text-[var(--accent)]'}`} /> 
+        <span>{isIncomplete ? 'Complete Profile' : 'Edit Profile'}</span>
+        {isIncomplete && (
+          <span className="flex h-2 w-2 rounded-full bg-white animate-ping ml-1" />
+        )}
       </button>
 
       {showModal && (

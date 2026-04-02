@@ -96,12 +96,31 @@ export function EditProfileModal({ profile, onClose }: EditProfileModalProps) {
                 <RefreshCw className="h-4 w-4" />
               </button>
             </div>
-            <div className="text-center">
+            <div className="text-center w-full max-w-xs">
               <p className="text-xs font-bold uppercase tracking-widest text-[var(--text-tertiary)] mb-4">Background Fill</p>
               <AvatarColorPicker 
                 currentValue={bgColor} 
                 onSelect={setBgColor} 
               />
+              
+              {/* Profile Strength Indicator */}
+              <div className="mt-8 pt-6 border-t border-[var(--border)]">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-tertiary)]">Profile Strength</span>
+                  <span className="text-[10px] font-bold text-[var(--accent)]">
+                    {Math.round(((bio.length > 0 ? 50 : 0) + (bgColor !== 'transparent' ? 25 : 0) + (seed !== profile.avatar_seed ? 25 : 0)))}%
+                  </span>
+                </div>
+                <div className="h-1.5 w-full bg-[var(--bg-secondary)] rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-[var(--accent)] transition-all duration-500 ease-out"
+                    style={{ width: `${(bio.length > 0 ? 50 : 0) + (bgColor !== 'transparent' ? 25 : 0) + (seed !== profile.avatar_seed ? 25 : 0)}%` }}
+                  />
+                </div>
+                <p className="text-[9px] text-[var(--text-tertiary)] mt-2">
+                  {bio.length === 0 ? "Add a bio to boost your profile strength!" : "Your profile is looking great!"}
+                </p>
+              </div>
             </div>
           </div>
 
