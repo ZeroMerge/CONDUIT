@@ -40,7 +40,6 @@ export function EditProfileModal({ profile, onClose }: EditProfileModalProps) {
         bio: bio.trim() || null,
         avatar_seed: seed,
         avatar_bg_color: bgColor,
-        updated_at: new Date().toISOString(),
       }
 
       const { error } = await supabase

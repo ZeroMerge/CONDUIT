@@ -11,10 +11,12 @@ interface ProfileEditTriggerProps {
 }
 
 export function ProfileEditTrigger({ profile }: ProfileEditTriggerProps) {
+  const [mounted, setMounted] = useState(false)
   const [isOwner, setIsOwner] = useState(false)
   const [showModal, setShowModal] = useState(false)
 
   useEffect(() => {
+    setMounted(true)
     async function checkOwner() {
       const { data: { user } } = await supabase.auth.getUser()
       if (user && user.id === profile.id) {
@@ -25,6 +27,16 @@ export function ProfileEditTrigger({ profile }: ProfileEditTriggerProps) {
   }, [profile.id])
 
   if (!isOwner) return null
+
+  // During hydration, return a stable version without animations or dynamic classes
+  if (!mounted) {
+    return (
+      <button className="flex items-center gap-2 px-6 py-2.5 text-sm font-bold rounded-full bg-[var(--bg-secondary)] text-[var(--text-primary)] border border-[var(--border-strong)] opacity-50">
+        <Edit2 className="h-4 w-4 text-[var(--accent)]" /> 
+        Edit Profile
+      </button>
+    )
+  }
 
   const isIncomplete = !profile.bio || profile.bio.length < 5
   
