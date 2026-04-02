@@ -14,11 +14,11 @@
   --text-secondary: #6b6b63;
   --text-tertiary: #9a9a90;
   --text-inverse: #f7f7f5;
-  --accent: #d97706;
-  --accent-hover: #b45309;
-  --accent-subtle: #fef3c7;
-  --accent-border: #fde68a;
-  --accent-text: #78350f;
+  --accent: #16a34a; 
+  --accent-hover: #15803d;
+  --accent-subtle: #f0fdf4;
+  --accent-border: #bbf7d0;
+  --accent-text: #14532d;
   --verified: #16a34a;
   --pending: #d97706;
   --unverified: #6b6b63;
