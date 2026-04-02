@@ -164,5 +164,5 @@ INSERT INTO steps (flow_id, order_index, title, instruction, prompt_text, expect
 VALUES 
 ('d4444444-4444-4444-4444-444444444444', 0, 'Contextual Core Injection', 'Paste your raw source material (article, video transcript, or notes).', 'Condense this context into 3 viral themes: {{SOURCE_MATERIAL}}', 'Platform-neutral hooks.'),
 ('d4444444-4444-4444-4444-444444444444', 1, 'The LinkedIn Professional Thread', 'Adapt the core themes into a long-form professional carosel post.', 'Create a 5-part LinkedIn carousel based on the core themes.', 'Professional-tier content.'),
-('d4444444-4443-4444-4444-444444444444', 2, 'The Viral Hook (X/Twitter)', 'Create short, high-engagement threads with specific attention hooks.', 'Draft a "mega-viral" X hook for these themes.', 'Viral engagement hooks.')
+('d4444444-4444-4444-4444-444444444444', 2, 'The Viral Hook (X/Twitter)', 'Create short, high-engagement threads with specific attention hooks.', 'Draft a "mega-viral" X hook for these themes.', 'Viral engagement hooks.')
 ON CONFLICT (id) DO NOTHING;
