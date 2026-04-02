@@ -12,8 +12,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const handleAuth = async (user: any, event?: string) => {
+      setUser(user)
+
+      const isAuthPage = pathname?.startsWith('/auth/signin') || pathname?.startsWith('/auth/signup')
+      const isOnboardingPage = pathname === '/auth/onboarding'
+      const isAdminPage = pathname?.startsWith('/admin')
+      const isCreatePage = pathname?.startsWith('/create')
+      
+      // Protected routes that REQUIRE a session
+      const isProtectedRoute = isAdminPage || isCreatePage || isOnboardingPage
+
       if (user) {
-        setUser(user)
         const { data: profile } = await supabase
           .from('profiles')
           .select('*')
@@ -22,12 +31,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         if (profile) {
           setProfile(profile)
-          if (pathname === '/auth/onboarding') {
+          // If on onboarding but profile exists, go home
+          if (isOnboardingPage) {
             router.push('/')
           }
         } else {
           setProfile(null)
-          if (pathname !== '/auth/onboarding') {
+          // Profile missing -> must onboard (unless it's a guest-only page which shouldn't happen if user exists)
+          if (!isOnboardingPage && !isAuthPage) {
             router.push('/auth/onboarding')
           }
         }
@@ -35,11 +46,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(null)
         setProfile(null)
 
-        // Redirect to signin if session expires or user logs out on a protected route
-        const isAuthPage = pathname?.startsWith('/auth')
-        const isPublicPage = pathname === '/' || pathname === '/explore' || pathname === '/flows'
-        
-        if (!isAuthPage && !isPublicPage && (event === 'SIGNED_OUT' || event === 'USER_UPDATED')) {
+        // Redirect to signin if session is missing on a protected route
+        // We also check for SIGNED_OUT event to handle explicit logout
+        if (isProtectedRoute || event === 'SIGNED_OUT') {
           router.push('/auth/signin')
         }
       }
@@ -53,6 +62,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // 2. Listen for login/logout events
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log('AUTH_EVENT:', event)
       handleAuth(session?.user, event)
     })
 

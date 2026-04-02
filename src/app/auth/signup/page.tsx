@@ -14,8 +14,16 @@ import { toast } from 'sonner'
 function SignUpContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { setUser, setProfile } = useUserStore()
+  const { user, setUser, setProfile } = useUserStore()
   const [step, setStep] = useState<1 | 2 | 3>(1)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (user && step === 1) {
+      router.push('/')
+    }
+  }, [user, step, router])
 
   // Step 1 fields
   const [email, setEmail] = useState('')
@@ -73,7 +81,7 @@ function SignUpContent() {
   }, [username, checkUsername])
 
   const handleStep1Submit = async () => {
-    if (!email.trim() || password.length < 8 || password !== confirmPassword) return
+    setIsSubmitting(true)
     try {
       const { data, error } = await supabase.auth.signUp({
         email: email.trim(),
@@ -82,9 +90,23 @@ function SignUpContent() {
           emailRedirectTo: `${window.location.origin}/auth/callback`,
         },
       })
-      if (error) throw error
-      if (data.user) { setUser(data.user); setStep(2); }
-    } catch (err: any) { toast.error(err.message || 'Failed to create account') }
+      if (error) {
+        if (error.message.includes('already registered')) {
+          toast.error('This email is already registered. Please sign in instead.')
+          router.push('/auth/signin')
+          return
+        }
+        throw error
+      }
+      if (data.user) { 
+        setUser(data.user)
+        setStep(2) 
+      }
+    } catch (err: any) { 
+      toast.error(err.message || 'Failed to create account') 
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const handleStep3Submit = async () => {
@@ -174,10 +196,11 @@ function SignUpContent() {
 
           <button
             onClick={handleStep1Submit}
-            disabled={!email || password.length < 8 || password !== confirmPassword}
-            className="w-full bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-sm font-medium py-2 rounded transition-colors disabled:opacity-50"
+            disabled={isSubmitting || !email || password.length < 8 || password !== confirmPassword}
+            className="w-full bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-sm font-medium py-2.5 rounded transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
           >
-            Continue &rarr;
+            {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+            {isSubmitting ? 'Creating account...' : 'Continue'} &rarr;
           </button>
 
           {/* SOCIAL LOGIN OPTIONS */}
