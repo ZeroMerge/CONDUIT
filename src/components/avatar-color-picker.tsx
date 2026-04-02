@@ -28,7 +28,7 @@ export function AvatarColorPicker({ currentBackgroundColor, profileId }: { curre
     try {
       const { error } = await supabase
         .from('profiles')
-        .update({ avatar_bg_color: color })
+        .update({ avatar_bg_color: color } as any)
         .eq('id', profileId)
 
       if (error) throw error

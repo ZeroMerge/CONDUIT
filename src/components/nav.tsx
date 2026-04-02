@@ -8,12 +8,12 @@ import { useUserStore } from '@/lib/stores/user'
 import { Avatar } from './avatar'
 
 export function Nav() {
-  const { profile, clearUser } = useUserStore()
+  const { profile, clear } = useUserStore()
   const router = useRouter()
 
   const handleSignOut = async () => {
     await supabase.auth.signOut()
-    clearUser()
+    clear()
     router.push('/auth/signin')
   }
 
@@ -30,7 +30,7 @@ export function Nav() {
         <div className="hidden md:flex items-center gap-6">
           <Link href="/explore" className="text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
             Explore
-          </div>
+          </Link>
           {profile && (
             <Link href="/create" className="text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
               Create Flow
