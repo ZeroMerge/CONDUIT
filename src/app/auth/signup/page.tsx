@@ -7,6 +7,7 @@ import { Loader2, Check, X, RefreshCw } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
 import { useUserStore } from '@/lib/stores/user'
 import { Avatar } from '@/components/avatar'
+import { AvatarColorPicker } from '@/components/avatar-color-picker'
 import { sanitizeUsername } from '@/lib/username'
 import { toast } from 'sonner'
 
@@ -32,10 +33,11 @@ function SignUpContent() {
   // Step 3 fields
   const [avatarOptions, setAvatarOptions] = useState<string[]>([])
   const [selectedAvatar, setSelectedAvatar] = useState('')
+  const [selectedColor, setSelectedColor] = useState('transparent')
 
   // Initialize avatar options
   useEffect(() => {
-    const options = Array.from({ length: 6 }, () => crypto.randomUUID())
+    const options = Array.from({ length: 9 }, () => crypto.randomUUID())
     setAvatarOptions(options)
     setSelectedAvatar(options[0])
   }, [])
@@ -95,6 +97,7 @@ function SignUpContent() {
         id: user.id,
         username: username.toLowerCase(),
         avatar_seed: selectedAvatar,
+        avatar_bg_color: selectedColor,
       }] as any)
       if (error) throw error
 
@@ -103,7 +106,7 @@ function SignUpContent() {
         id: user.id,
         username: username.toLowerCase(),
         avatar_seed: selectedAvatar,
-        avatar_bg_color: 'transparent',
+        avatar_bg_color: selectedColor,
         bio: null,
         created_at: new Date().toISOString(),
         current_streak: 0,
@@ -245,21 +248,48 @@ function SignUpContent() {
 
       {step === 3 && (
         <div className="space-y-6">
-          <h1 className="text-xl font-geist font-semibold text-center">Pick your robot</h1>
+          <div className="text-center">
+            <h1 className="text-xl font-geist font-semibold text-[var(--text-primary)]">Pick your robot</h1>
+            <p className="text-sm text-[var(--text-tertiary)] mt-1">Select a base bot and customize the fill.</p>
+          </div>
+
           <div className="grid grid-cols-3 gap-3">
             {avatarOptions.map(seed => (
               <button
                 key={seed}
                 onClick={() => setSelectedAvatar(seed)}
-                className={`p-2 rounded border-2 ${selectedAvatar === seed ? 'border-[var(--accent)] bg-[var(--accent-subtle)]' : 'border-[var(--border)]'}`}
+                className={`p-2 rounded-xl border-2 transition-all ${selectedAvatar === seed ? 'border-[var(--accent)] bg-[var(--accent-subtle)]' : 'border-[var(--border)] bg-[var(--bg-secondary)]'}`}
               >
-                <Avatar seed={seed} size={64} />
+                <Avatar seed={seed} size={64} bg_color={selectedColor} />
               </button>
             ))}
           </div>
+
+          <button 
+            type="button"
+            onClick={() => {
+              const options = Array.from({ length: 9 }, () => crypto.randomUUID())
+              setAvatarOptions(options)
+              setSelectedAvatar(options[0])
+            }}
+            className="flex items-center justify-center gap-2 w-full text-xs font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+          >
+            <RefreshCw className="h-3 w-3" /> Shuffle Robots
+          </button>
+
+          <div className="pt-4 border-t border-[var(--border)]">
+            <p className="text-xs font-bold uppercase tracking-widest text-[var(--text-tertiary)] mb-3 text-center">Background Fill</p>
+            <div className="flex justify-center">
+              <AvatarColorPicker 
+                currentValue={selectedColor} 
+                onSelect={setSelectedColor} 
+              />
+            </div>
+          </div>
+
           <button
             onClick={handleStep3Submit}
-            className="w-full bg-[var(--accent)] text-white text-sm font-medium py-2 rounded transition-colors"
+            className="w-full bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-sm font-medium py-3 rounded-xl transition-all shadow-sm hover:shadow-md"
           >
             Enter Conduit &rarr;
           </button>

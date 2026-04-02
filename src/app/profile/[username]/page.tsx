@@ -9,6 +9,8 @@ import { FlowCard } from '@/components/flow-card'
 import { TrustBadge } from '@/components/trust-badge'
 import { ActivityHeatmap } from '@/components/activity-heatmap'
 import { ProfileShareButton } from '@/components/profile-share-button'
+import { ProfileEditTrigger } from '@/components/profile-edit-trigger'
+import type { Profile } from '@/types'
 import {
   Flame, Clock, Trophy, Star, GitFork,
   CheckCircle, Zap, Target, BarChart2, Shield, Medal, ExternalLink,
@@ -75,8 +77,10 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
   const { username } = await params
   const supabase = await createClient()
 
-  const { data: profile, error: profileError } = await supabase
+  const { data: profileData, error: profileError } = await supabase
     .from('profiles').select('*').ilike('username', username).single()
+  
+  const profile = profileData as Profile
   
   if (profileError) {
     console.error('PROFILE FETCH ERROR details:', {
@@ -117,7 +121,7 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
   const { level, xpIntoLevel, pct: levelPct } = levelFromXp(profile.total_xp || 0)
   const totalForksOnCreatedFlows = createdFlows?.reduce((s, f: any) => s + (f.fork_count || 0), 0) ?? 0
   const topSkill = skills?.[0] ?? null
-  const isAdmin = (profile as any).is_admin === true
+  const isAdmin = profile.is_admin === true
 
   const achievements: { icon: any; label: string; sub: string; unlocked: boolean }[] = [
     { icon: Zap,       label: 'First Flow',    sub: 'Completed your first flow',        unlocked: (completions?.length ?? 0) >= 1 },
@@ -141,7 +145,7 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
           <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
 
             <div className="relative flex-shrink-0">
-              <Avatar seed={profile.avatar_seed} size={112} verified={(profile as any).is_verified} />
+              <Avatar seed={profile.avatar_seed} size={112} verified={profile.is_verified} bg_color={profile.avatar_bg_color} />
               <div className="absolute -bottom-2 -right-2 bg-[var(--accent)] text-white text-xs font-bold w-7 h-7 rounded-full flex items-center justify-center border-2 border-[var(--bg-secondary)] shadow">
                 {level}
               </div>
@@ -187,7 +191,8 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
               </p>
             </div>
 
-            <div className="flex-shrink-0">
+            <div className="flex flex-col items-center md:items-end gap-3 flex-shrink-0">
+              <ProfileEditTrigger profile={profile} />
               <ProfileShareButton username={profile.username} />
             </div>
           </div>
