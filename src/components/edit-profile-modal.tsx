@@ -2,12 +2,13 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { X, RefreshCw, Loader2, Save } from 'lucide-react'
+import { X, RefreshCw, Loader2, Save, Sparkles } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
 import { useUserStore } from '@/lib/stores/user'
 import { Avatar } from '@/components/avatar'
 import { AvatarColorPicker } from '@/components/avatar-color-picker'
 import { toast } from 'sonner'
+import confetti from 'canvas-confetti'
 import type { Profile } from '@/types'
 
 interface EditProfileModalProps {
@@ -23,6 +24,8 @@ export function EditProfileModal({ profile, onClose }: EditProfileModalProps) {
   const [seed, setSeed] = useState(profile.avatar_seed)
   const [bgColor, setBgColor] = useState(profile.avatar_bg_color || 'transparent')
   const [loading, setLoading] = useState(false)
+
+  const strength = Math.round(((bio.length > 0 ? 50 : 0) + (bgColor !== 'transparent' ? 25 : 0) + (seed !== profile.avatar_seed ? 25 : 0)))
 
   const handleShuffle = () => {
     setSeed(crypto.randomUUID())
@@ -55,7 +58,23 @@ export function EditProfileModal({ profile, onClose }: EditProfileModalProps) {
         ...updates,
       } as any)
 
-      toast.success('Profile updated successfully!')
+      if (strength === 100) {
+        confetti({
+          particleCount: 150,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6']
+        })
+        toast.success(`You're legendary, ${profile.username}!`, {
+          description: "Profile 100% complete. You've earned the 'Master' status.",
+          icon: <Sparkles className="h-4 w-4 text-emerald-500" />
+        })
+      } else {
+        toast.success('Looking sharp!', {
+          description: `Profile ${strength}% complete. Keep going!`,
+        })
+      }
+
       router.refresh()
       onClose()
     } catch (error: any) {
@@ -107,13 +126,17 @@ export function EditProfileModal({ profile, onClose }: EditProfileModalProps) {
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-tertiary)]">Profile Strength</span>
                   <span className="text-[10px] font-bold text-[var(--accent)]">
-                    {Math.round(((bio.length > 0 ? 50 : 0) + (bgColor !== 'transparent' ? 25 : 0) + (seed !== profile.avatar_seed ? 25 : 0)))}%
+                    {strength}%
                   </span>
                 </div>
                 <div className="h-1.5 w-full bg-[var(--bg-secondary)] rounded-full overflow-hidden">
                   <div 
-                    className="h-full bg-[var(--accent)] transition-all duration-500 ease-out"
-                    style={{ width: `${(bio.length > 0 ? 50 : 0) + (bgColor !== 'transparent' ? 25 : 0) + (seed !== profile.avatar_seed ? 25 : 0)}%` }}
+                    className={`h-full transition-all duration-700 ease-out rounded-full ${
+                      strength < 40 ? 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.4)]' :
+                      strength < 70 ? 'bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.4)]' :
+                      'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]'
+                    }`}
+                    style={{ width: `${strength}%` }}
                   />
                 </div>
                 <p className="text-[9px] text-[var(--text-tertiary)] mt-2">
