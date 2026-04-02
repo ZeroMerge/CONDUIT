@@ -7,20 +7,22 @@ interface AvatarProps {
   seed: string
   size?: number
   verified?: boolean
+  bg_color?: string | null
 }
 
-export function Avatar({ seed, size = 32, verified = false }: AvatarProps) {
+export function Avatar({ seed, size = 32, verified = false, bg_color = 'transparent' }: AvatarProps) {
   return (
     <div className="relative inline-flex flex-shrink-0" style={{ width: size, height: size }}>
       <div 
-        className={`w-full h-full rounded-full overflow-hidden border bg-[var(--bg-tertiary)] p-[1px] transition-all duration-300 ${
+        className={`w-full h-full rounded-full overflow-hidden border p-[1px] transition-all duration-300 ${
           verified 
           ? 'border-[var(--verified)] shadow-[0_0_15px_rgba(16,185,129,0.2)]' 
           : 'border-[var(--border)]'
         }`}
+        style={{ backgroundColor: bg_color || 'transparent' }}
       >
         <img
-          src={avatarUrl(seed)}
+          src={avatarUrl(seed, bg_color)}
           alt="Avatar"
           width={size}
           height={size}

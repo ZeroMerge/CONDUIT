@@ -103,6 +103,7 @@ function SignUpContent() {
         id: user.id,
         username: username.toLowerCase(),
         avatar_seed: selectedAvatar,
+        avatar_bg_color: 'transparent',
         bio: null,
         created_at: new Date().toISOString(),
         current_streak: 0,

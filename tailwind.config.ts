@@ -14,6 +14,11 @@ const config: Config = {
         'dm-sans': ['var(--font-dm-sans)', 'system-ui', 'sans-serif'],
         'geist-mono': ['var(--font-geist-mono)', 'monospace'],
       },
+      borderRadius: {
+        lg: '6px',
+        md: '6px',
+        sm: '4px',
+      },
     },
   },
   plugins: [],

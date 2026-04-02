@@ -2,6 +2,7 @@ export interface Profile {
   id: string
   username: string
   avatar_seed: string
+  avatar_bg_color?: string | null
   bio: string | null
   created_at: string
   current_streak: number
