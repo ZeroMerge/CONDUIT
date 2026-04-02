@@ -1,4 +1,4 @@
--- Migration: Full Database Setup (Schema + Premium Seed)
+-- Migration: Full Database Setup (Schema + 4 Community-Focused Premium Seed Workflows)
 -- Run this in your Supabase SQL Editor to initialize your project
 
 -- 1. Create Tables
@@ -83,27 +83,26 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- 3. Seed Premium Starter Content
+-- 3. Seed ALL 4 PREMIUM Starter Workflows
 
 -- 3.1. The "Senior Architect" Code Audit Suite
 INSERT INTO flows (id, title, description, category, estimated_minutes, status, safety_status, xp_reward, readme_markdown)
 VALUES (
   'a1111111-1111-1111-1111-111111111111',
   'The "Senior Architect" Code Audit Suite',
-  'A rigorous, multi-phase technical audit flow designed to transform raw code into production-ready, security-hardened software.',
+  'A rigorous technical audit flow designed to transform raw code into security-hardened software.',
   'DevOps & Security',
   15,
   'verified',
   'safe',
   500,
-  '### Enterprise Code Review Standard\nThis flow mimics the workflow of a Senior Security Architect.'
+  '### Enterprise Code Review Standard\nFind vulnerabilities and optimize your codebase instantly.'
 ) ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO steps (flow_id, order_index, title, instruction, prompt_text, expected_outcome)
 VALUES 
 ('a1111111-1111-1111-1111-111111111111', 0, 'Phase 1: Security Audit', 'Analyze code for standard vulnerabilities.', 'Audit this code: {{INPUT_CODE}}', 'Security report.'),
-('a1111111-1111-1111-1111-111111111111', 1, 'Phase 2: Performance Audit', 'Analyze O-notation.', 'Identify O(n^2) in: {{INPUT_CODE}}', 'Performance report.'),
-('a1111111-1111-1111-1111-111111111111', 2, 'Phase 3: PR Manifest', 'Generate PR description.', 'Build PR from findings.', 'Markdown PR.')
+('a1111111-1111-1111-1111-111111111111', 1, 'Phase 2: Performance Audit', 'Analyze O-notation.', 'Identify efficiency gaps in: {{INPUT_CODE}}', 'Performance report.')
 ON CONFLICT (id) DO NOTHING;
 
 -- 3.2. Strategic Brand Identity Engine
@@ -123,5 +122,47 @@ VALUES (
 INSERT INTO steps (flow_id, order_index, title, instruction, prompt_text, expected_outcome)
 VALUES 
 ('b2222222-2222-2222-2222-222222222222', 0, 'The Brand Core', 'Simons Sinek Golden Circle.', 'Map Why/How/What for {{PRODUCT}}', 'Mission statement.'),
-('b2222222-2222-2222-2222-222222222222', 1, 'Visual Token Library', 'Generate Midjourney prompts.', 'Create visual tokens for {{PRODUCT}}', 'Prompt library.')
+('b2222222-2222-2222-2222-222222222222', 1, 'Visual Prompt Library', 'Generate Midjourney prompts.', 'Create high-fidelity visual tokens for {{PRODUCT}}', 'Visual style guide.')
+ON CONFLICT (id) DO NOTHING;
+
+-- 3.3. Conduit Masterclass: Platform Onboarding (COMMUNITY WORKFLOW)
+INSERT INTO flows (id, title, description, category, estimated_minutes, status, safety_status, xp_reward, readme_markdown)
+VALUES (
+  'c3333333-3333-3333-3333-333333333333',
+  'Conduit Masterclass: How to Conquer the Platform',
+  'The official guide for the community to learn how to discover, fork, and verify AI workflows.',
+  'Education',
+  10,
+  'verified',
+  'safe',
+  1000,
+  '### Welcome to the Conduit Community\nMaster the art of verifiable AI. This flow will teach you how to excel in our ecosystem.'
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO steps (flow_id, order_index, title, instruction, prompt_text, expected_outcome)
+VALUES 
+('c3333333-3333-3333-3333-333333333333', 0, 'Flow Discovery', 'Explore the "Explore" page and learn how to identify "Safe" vs "Risky" safety statuses.', 'Summarize how you distinguish verified flows.', 'Platform awareness.'),
+('c3333333-3333-3333-3333-333333333333', 1, 'Forking for Customization', 'Learn how to take an existing flow and modify it for your specific user case.', 'Explain the benefit of "Forking" over starting from scratch.', 'Forking competency.'),
+('c3333333-3333-3333-3333-333333333333', 2, 'Validation & XP Mastery', 'Understand how to submit proof and earn experience points (XP) and streak rewards.', 'Click "Complete" on a flow and see how your profile XP increases.', 'Gamification mastery.')
+ON CONFLICT (id) DO NOTHING;
+
+-- 3.4. Viral Social Omnichannel Factory (COMMUNITY WORKFLOW)
+INSERT INTO flows (id, title, description, category, estimated_minutes, status, safety_status, xp_reward, readme_markdown)
+VALUES (
+  'd4444444-4444-4444-4444-444444444444',
+  'Viral Social Omnichannel Factory',
+  'Transform a single idea into 10 multi-platform hooks that drive real traffic and engagement.',
+  'Content Creation',
+  25,
+  'verified',
+  'safe',
+  1200,
+  '### Content Velocity Standard\nStop posting manually. Build a content engine that distributes your value everywhere automatically.'
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO steps (flow_id, order_index, title, instruction, prompt_text, expected_outcome)
+VALUES 
+('d4444444-4444-4444-4444-444444444444', 0, 'Contextual Core Injection', 'Paste your raw source material (article, video transcript, or notes).', 'Condense this context into 3 viral themes: {{SOURCE_MATERIAL}}', 'Platform-neutral hooks.'),
+('d4444444-4444-4444-4444-444444444444', 1, 'The LinkedIn Professional Thread', 'Adapt the core themes into a long-form professional carosel post.', 'Create a 5-part LinkedIn carousel based on the core themes.', 'Professional-tier content.'),
+('d4444444-4443-4444-4444-444444444444', 2, 'The Viral Hook (X/Twitter)', 'Create short, high-engagement threads with specific attention hooks.', 'Draft a "mega-viral" X hook for these themes.', 'Viral engagement hooks.')
 ON CONFLICT (id) DO NOTHING;
