@@ -11,7 +11,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
 
   useEffect(() => {
-    const handleAuth = async (user: any) => {
+    const handleAuth = async (user: any, event?: string) => {
       if (user) {
         setUser(user)
         const { data: profile } = await supabase
@@ -22,12 +22,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         if (profile) {
           setProfile(profile)
-          // If they have a profile but are stuck on the onboarding page, send them home
           if (pathname === '/auth/onboarding') {
             router.push('/')
           }
         } else {
-          // If they are logged in but have NO profile, force them to onboarding
           setProfile(null)
           if (pathname !== '/auth/onboarding') {
             router.push('/auth/onboarding')
@@ -36,6 +34,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } else {
         setUser(null)
         setProfile(null)
+
+        // Redirect to signin if session expires or user logs out on a protected route
+        const isAuthPage = pathname?.startsWith('/auth')
+        const isPublicPage = pathname === '/' || pathname === '/explore' || pathname === '/flows'
+        
+        if (!isAuthPage && !isPublicPage && (event === 'SIGNED_OUT' || event === 'USER_UPDATED')) {
+          router.push('/auth/signin')
+        }
       }
       setLoading(false)
     }
@@ -45,15 +51,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       handleAuth(session?.user)
     })
 
-    // 2. Listen for login/logout events (like returning from Google OAuth)
+    // 2. Listen for login/logout events
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_OUT') {
-        setUser(null)
-        setProfile(null)
-        router.push('/auth/signin')
-      } else {
-        handleAuth(session?.user)
-      }
+      handleAuth(session?.user, event)
     })
 
     return () => subscription.unsubscribe()

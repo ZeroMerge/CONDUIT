@@ -73,12 +73,12 @@ function SignUpContent() {
   const handleStep1Submit = async () => {
     if (!email.trim() || password.length < 8 || password !== confirmPassword) return
     try {
-      const { data, error } = await supabase.auth.signUp({ 
-        email: email.trim(), 
+      const { data, error } = await supabase.auth.signUp({
+        email: email.trim(),
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback`
-        }
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
       })
       if (error) throw error
       if (data.user) { setUser(data.user); setStep(2); }
