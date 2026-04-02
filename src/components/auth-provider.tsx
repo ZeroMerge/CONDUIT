@@ -18,9 +18,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const isOnboardingPage = pathname === '/auth/onboarding'
       const isAdminPage = pathname?.startsWith('/admin')
       const isCreatePage = pathname?.startsWith('/create')
+      const isProfilePage = pathname?.startsWith('/profile')
       
       // Protected routes that REQUIRE a session
-      const isProtectedRoute = isAdminPage || isCreatePage || isOnboardingPage
+      const isProtectedRoute = isAdminPage || isCreatePage || isOnboardingPage || isProfilePage
 
       if (user) {
         const { data: profile } = await supabase
