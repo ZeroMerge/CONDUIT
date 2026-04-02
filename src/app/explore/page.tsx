@@ -6,10 +6,7 @@ export default async function ExplorePage() {
 
   const { data: flows } = await supabase
     .from('flows')
-    .select(`
-      *,
-      creator:profiles(*)
-    `)
+    .select('*')
     .order('like_count', { ascending: false })
 
   const { data: profiles } = await supabase.from('profiles').select('total_time_saved_minutes')

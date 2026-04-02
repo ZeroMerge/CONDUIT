@@ -23,10 +23,7 @@ export default async function HomePage() {
   // Fetch trending flows
   const { data: trendingFlows } = await supabase
     .from('flows')
-    .select(`
-      *,
-      creator:profiles(*)
-    `)
+    .select('*')
     .order('like_count', { ascending: false })
     .limit(6)
 

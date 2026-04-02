@@ -281,18 +281,24 @@ export default function CreateFlowPage() {
             <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
               Category
             </label>
-            <select
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className="w-full bg-[var(--bg-primary)] border border-[var(--border)] focus:border-[var(--border-strong)] outline-none rounded px-3 py-2 text-sm text-[var(--text-primary)] transition-colors duration-150"
-            >
-              <option value="">Select a category</option>
-              {categories.map((cat) => (
-                <option key={cat} value={cat}>
-                  {cat}
-                </option>
-              ))}
-            </select>
+            <div className="relative">
+              <input
+                type="text"
+                list="flow-categories"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                className="w-full bg-[var(--bg-primary)] border border-[var(--border)] focus:border-[var(--border-strong)] outline-none rounded px-3 py-2 text-sm text-[var(--text-primary)] transition-colors duration-150"
+                placeholder="Select or type a new category (e.g. Web3, Design, AI)..."
+              />
+              <datalist id="flow-categories">
+                {categories.map((cat) => (
+                  <option key={cat} value={cat} />
+                ))}
+              </datalist>
+            </div>
+            <p className="text-[10px] text-[var(--text-tertiary)] mt-1 uppercase tracking-widest font-bold">
+              Tip: New categories will automatically create a filter button on the home page.
+            </p>
             {errors.category && (
               <p className="text-sm text-[var(--risky)] mt-1">{errors.category}</p>
             )}
