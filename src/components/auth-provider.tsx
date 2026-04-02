@@ -46,8 +46,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     })
 
     // 2. Listen for login/logout events (like returning from Google OAuth)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      handleAuth(session?.user)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_OUT') {
+        setUser(null)
+        setProfile(null)
+        router.push('/auth/signin')
+      } else {
+        handleAuth(session?.user)
+      }
     })
 
     return () => subscription.unsubscribe()

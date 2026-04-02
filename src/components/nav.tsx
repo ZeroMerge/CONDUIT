@@ -26,7 +26,7 @@ export function Nav() {
   }
 
   return (
-    <nav className="sticky top-0 z-50 h-14 border-b border-[var(--border)] bg-[var(--bg-primary)]">
+    <nav className="sticky top-0 z-50 h-14 border-b border-[var(--border)] bg-[var(--bg-primary)]/80 backdrop-blur-md">
       <div className="max-w-[1120px] mx-auto px-6 flex items-center justify-between h-full">
         <Link href="/" className="font-geist font-semibold text-base text-[var(--text-primary)]">
           Conduit
@@ -65,7 +65,7 @@ export function Nav() {
 
                 {/* Positioned at top-full without margin to prevent hover loss */}
                 <div className="absolute right-0 top-full pt-1 w-40 hidden group-hover:block animate-in fade-in slide-in-from-top-1 duration-150">
-                  <div className="bg-[var(--bg-primary)] border border-[var(--border)] rounded shadow-xl overflow-hidden">
+                  <div className="bg-[var(--bg-secondary)] border border-[var(--border)] rounded-md shadow-2xl overflow-hidden">
                     <Link
                       href={`/profile/${profile.username}`}
                       className="block px-4 py-2 text-sm text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]"

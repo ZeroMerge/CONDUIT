@@ -136,7 +136,7 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
     <div className="min-h-screen bg-[var(--bg-primary)]">
 
       {/* ── HERO ──────────────────────────────────────────── */}
-      <div className="border-b border-[var(--border)] bg-[var(--bg-secondary)]">
+      <div className="border-b border-[#1a1a1a] bg-[#050505]">
         <div className="max-w-[1120px] mx-auto px-6 py-12">
           <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
 
@@ -150,11 +150,11 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
             {/* Info */}
             <div className="flex-1 text-center md:text-left">
               <div className="flex items-center gap-3 flex-wrap justify-center md:justify-start">
-                <h1 className="text-3xl font-geist font-bold text-[var(--text-primary)] tracking-tight">
+                <h1 className="text-4xl font-semibold text-[var(--text-primary)] tracking-tight">
                   {profile.username}
                 </h1>
                 {isAdmin && (
-                  <span className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--accent)] bg-[var(--accent-subtle)] border border-[var(--accent-border)] px-2.5 py-1 rounded-full">
+                  <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-[var(--accent)] bg-[var(--accent-subtle)] border border-[var(--accent-border)] px-2 py-0.5 rounded-md">
                     <Shield className="h-3 w-3" /> Admin
                   </span>
                 )}
@@ -172,13 +172,13 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
               )}
 
               {/* XP progress */}
-              <div className="mt-4 max-w-xs mx-auto md:mx-0">
-                <div className="flex justify-between text-xs text-[var(--text-tertiary)] mb-1">
+              <div className="mt-6 max-w-xs mx-auto md:mx-0">
+                <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest text-[var(--text-tertiary)] mb-2">
                   <span>Level {level}</span>
-                  <span>{xpIntoLevel} / 200 XP → Level {level + 1}</span>
+                  <span>{xpIntoLevel} / 200 XP</span>
                 </div>
-                <div className="h-1.5 w-full bg-[var(--border)] rounded-full overflow-hidden">
-                  <div className="h-full bg-[var(--accent)] rounded-full" style={{ width: `${levelPct}%` }} />
+                <div className="h-1 w-full bg-[#1a1a1a] rounded-full overflow-hidden">
+                  <div className="h-full bg-[var(--accent)] transition-all duration-1000" style={{ width: `${levelPct}%` }} />
                 </div>
               </div>
 
@@ -193,19 +193,19 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
           </div>
 
           {/* Stat bar */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mt-10">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mt-12">
             {[
               { icon: Trophy,      value: (profile.total_xp || 0).toLocaleString(), label: 'Total XP',         accent: true },
-              { icon: CheckCircle, value: completions?.length ?? 0,                 label: 'Flows Completed' },
-              { icon: Target,      value: `${successRate}%`,                        label: 'Success Rate' },
-              { icon: Flame,       value: profile.current_streak || 0,              label: 'Day Streak' },
+              { icon: CheckCircle, value: completions?.length ?? 0,                 label: 'Completed' },
+              { icon: Target,      value: `${successRate}%`,                        label: 'Accuracy' },
+              { icon: Flame,       value: profile.current_streak || 0,              label: 'Streak' },
               { icon: Clock,       value: `${hoursSaved}h`,                         label: 'Time Saved' },
-              { icon: Star,        value: createdFlows?.length ?? 0,                label: 'Flows Created' },
+              { icon: Star,        value: createdFlows?.length ?? 0,                label: 'Created' },
             ].map(({ icon: Icon, value, label, accent }) => (
-              <div key={label} className={`rounded-xl border p-4 text-center ${accent ? 'bg-[var(--accent-subtle)] border-[var(--accent-border)]' : 'bg-[var(--bg-primary)] border-[var(--border)]'}`}>
-                <Icon className={`h-4 w-4 mx-auto mb-1.5 ${accent ? 'text-[var(--accent)]' : 'text-[var(--text-tertiary)]'}`} />
-                <p className={`text-xl font-geist font-bold ${accent ? 'text-[var(--accent-text)]' : 'text-[var(--text-primary)]'}`}>{value}</p>
-                <p className="text-xs text-[var(--text-tertiary)] mt-0.5">{label}</p>
+              <div key={label} className={`rounded-md border p-5 transition-all duration-300 hover:border-[#2a2a2a] ${accent ? 'bg-[#0a0a0a] border-[var(--accent-border)]' : 'bg-[#0a0a0a] border-[#1a1a1a]'}`}>
+                <Icon className={`h-3.5 w-3.5 mb-2 ${accent ? 'text-[var(--accent)]' : 'text-[var(--text-tertiary)]'}`} />
+                <p className={`text-2xl font-semibold tracking-tight ${accent ? 'text-[var(--accent-text)]' : 'text-[var(--text-primary)]'}`}>{value}</p>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-tertiary)] mt-1">{label}</p>
               </div>
             ))}
           </div>
@@ -221,7 +221,7 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
 
             {/* Activity heatmap */}
             <section>
-              <div className="bg-[var(--bg-secondary)] border border-[var(--border)] rounded-xl p-6">
+              <div className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-md p-8">
                 <ActivityHeatmap completions={completions || []} />
               </div>
             </section>
@@ -232,14 +232,14 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
                 <h2 className="text-xs font-bold uppercase tracking-widest text-[var(--text-tertiary)]">Achievements</h2>
                 <span className="text-xs text-[var(--text-tertiary)]">{unlockedCount} / {achievements.length} unlocked</span>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 {achievements.map(({ icon: Icon, label, sub, unlocked }) => (
-                  <div key={label} className={`rounded-xl border p-4 text-center transition-all ${unlocked ? 'bg-[var(--bg-secondary)] border-[var(--accent-border)]' : 'bg-[var(--bg-secondary)] border-[var(--border)] opacity-40 grayscale'}`}>
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center mx-auto mb-2 ${unlocked ? 'bg-[var(--accent-subtle)]' : 'bg-[var(--bg-tertiary)]'}`}>
+                  <div key={label} className={`rounded-md border p-6 text-center transition-all duration-300 ${unlocked ? 'bg-[#0a0a0a] border-[var(--accent-border)]' : 'bg-[#0a0a0a] border-[#1a1a1a] opacity-30 grayscale'}`}>
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center mx-auto mb-3 ${unlocked ? 'bg-[var(--accent-subtle)]' : 'bg-[#1a1a1a]'}`}>
                       <Icon className={`h-5 w-5 ${unlocked ? 'text-[var(--accent)]' : 'text-[var(--text-tertiary)]'}`} />
                     </div>
-                    <p className="text-xs font-semibold text-[var(--text-primary)]">{label}</p>
-                    <p className="text-[11px] text-[var(--text-tertiary)] mt-0.5 leading-tight">{sub}</p>
+                    <p className="text-[11px] font-bold uppercase tracking-wider text-[var(--text-primary)]">{label}</p>
+                    <p className="text-[10px] text-[var(--text-tertiary)] mt-1 leading-tight font-medium">{sub}</p>
                   </div>
                 ))}
               </div>
@@ -253,10 +253,10 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
                 </h2>
                 <div className="columns-2 sm:columns-3 gap-4 space-y-4">
                   {proofShots.map((shot, i) => (
-                    <Link key={i} href={`/flow/${shot.flowId}`} className="block group relative bg-[var(--bg-secondary)] rounded-xl overflow-hidden border border-[var(--border)] hover:border-[var(--border-strong)] transition-all break-inside-avoid shadow-sm hover:shadow-md">
-                      <img src={shot.url} alt={shot.flowTitle} className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-500 ease-out" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                        <p className="text-white text-sm font-semibold line-clamp-2 leading-tight drop-shadow-md">{shot.flowTitle}</p>
+                    <Link key={i} href={`/flow/${shot.flowId}`} className="block group relative bg-[#0a0a0a] rounded-md overflow-hidden border border-[#1a1a1a] hover:border-[var(--accent)] transition-all duration-500 break-inside-avoid">
+                      <img src={shot.url} alt={shot.flowTitle} className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-700 ease-out" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                        <p className="text-white text-xs font-bold uppercase tracking-wider line-clamp-2 leading-tight">{shot.flowTitle}</p>
                       </div>
                     </Link>
                   ))}
@@ -270,21 +270,21 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
                 <h2 className="text-xs font-bold uppercase tracking-widest text-[var(--text-tertiary)] mb-5">
                   Created Flows — {createdFlows.length}
                 </h2>
-                <div className="space-y-3">
+                <div className="space-y-4">
                   {createdFlows.map((flow: any) => (
-                    <Link key={flow.id} href={`/flow/${flow.id}`} className="group flex items-start gap-4 bg-[var(--bg-secondary)] border border-[var(--border)] rounded-xl p-5 hover:border-[var(--border-strong)] transition-all">
+                    <Link key={flow.id} href={`/flow/${flow.id}`} className="group flex items-start gap-5 bg-[#0a0a0a] border border-[#1a1a1a] rounded-md p-6 hover:border-[var(--accent)] transition-all duration-300">
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className="text-sm font-semibold text-[var(--text-primary)] group-hover:text-[var(--accent)] transition-colors">{flow.title}</span>
+                        <div className="flex items-center gap-3 flex-wrap">
+                          <span className="text-base font-semibold text-[var(--text-primary)] group-hover:text-[var(--accent)] transition-colors">{flow.title}</span>
                           <TrustBadge status={flow.status} size="sm" />
-                          <span className="text-xs bg-[var(--bg-tertiary)] border border-[var(--border)] px-2 py-0.5 rounded text-[var(--text-secondary)]">{flow.category}</span>
+                          <span className="text-[10px] font-bold uppercase tracking-wider bg-[#1a1a1a] border border-[#2a2a2a] px-2 py-0.5 rounded text-[var(--text-secondary)]">{flow.category}</span>
                         </div>
-                        <p className="text-sm text-[var(--text-secondary)] mt-1.5 line-clamp-2 leading-relaxed">{flow.description}</p>
-                        <div className="flex items-center gap-4 mt-3 text-xs text-[var(--text-tertiary)]">
-                          <span className="flex items-center gap-1"><CheckCircle className="h-3 w-3" />{flow.completion_count} completions</span>
-                          <span className="flex items-center gap-1"><GitFork className="h-3 w-3" />{flow.fork_count || 0} forks</span>
-                          <span>~{flow.estimated_minutes}min</span>
-                          <span>{new Date(flow.created_at).toLocaleDateString()}</span>
+                        <p className="text-sm text-[var(--text-secondary)] mt-2 line-clamp-2 leading-relaxed font-medium">{flow.description}</p>
+                        <div className="flex items-center gap-6 mt-4 text-[10px] font-bold uppercase tracking-widest text-[var(--text-tertiary)]">
+                          <span className="flex items-center gap-1.5"><CheckCircle className="h-3 w-3" />{flow.completion_count}</span>
+                          <span className="flex items-center gap-1.5"><GitFork className="h-3 w-3" />{flow.fork_count || 0}</span>
+                          <span>{flow.estimated_minutes}M</span>
+                          <span>{new Date(flow.created_at).getFullYear()}</span>
                         </div>
                       </div>
                     </Link>
@@ -327,43 +327,43 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
 
             {/* Skill Tree */}
             <div>
-              <h2 className="text-xs font-bold uppercase tracking-widest text-[var(--text-tertiary)] mb-4">Skill Tree</h2>
-              <div className="bg-[var(--bg-secondary)] border border-[var(--border)] rounded-xl p-6 relative overflow-hidden flex flex-col items-center min-h-[200px]">
+              <h2 className="text-[10px] font-bold uppercase tracking-[0.1em] text-[var(--text-tertiary)] mb-4">Skill Tree</h2>
+              <div className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-md p-8 relative overflow-hidden flex flex-col items-center min-h-[220px]">
                 {/* Background Grid Pattern */}
-                <div className="absolute inset-0 opacity-5 pointer-events-none" style={{ backgroundImage: 'radial-gradient(var(--text-primary) 1px, transparent 1px)', backgroundSize: '16px 16px' }} />
+                <div className="absolute inset-0 opacity-[0.02] pointer-events-none" style={{ backgroundImage: 'radial-gradient(var(--text-primary) 1px, transparent 1px)', backgroundSize: '16px 16px' }} />
                 
                 {skills && skills.length > 0 ? (
                   <div className="relative w-full flex flex-col items-center mt-2 pb-4">
                     {/* Root Node */}
-                    <div className="bg-[var(--bg-primary)] border-2 border-[var(--border)] text-[var(--text-primary)] font-black text-[10px] uppercase tracking-widest px-4 py-1.5 rounded-full shadow-sm z-10">
+                    <div className="bg-[#050505] border border-[#1a1a1a] text-[var(--text-primary)] font-bold text-[9px] uppercase tracking-widest px-4 py-1.5 rounded-md shadow-sm z-10">
                       Core AI
                     </div>
                     
                     {/* Branches */}
                     <div className="flex flex-wrap justify-center gap-x-8 gap-y-10 mt-6 relative w-full">
                       {/* Connecting Line from root (Horizontal) */}
-                      <div className="absolute -top-6 left-[10%] right-[10%] h-[2px] bg-[var(--border)] z-0" />
+                      <div className="absolute -top-6 left-[15%] right-[15%] h-[1px] bg-[#1a1a1a] z-0" />
                       {/* Connecting Line from root (Vertical) */}
-                      <div className="absolute -top-6 left-1/2 w-[2px] h-6 bg-[var(--border)] -translate-x-1/2 z-0" />
+                      <div className="absolute -top-6 left-1/2 w-[1px] h-6 bg-[#1a1a1a] -translate-x-1/2 z-0" />
                       
                       {skills.map((skill) => {
                         const { level, pct, label } = skillLevelFromXp(skill.xp_amount)
-                        const size = Math.min(80 + (level * 8), 130)
+                        const size = 96
                         
                         return (
                           <div key={skill.category} className="flex flex-col items-center relative group z-10 hover:z-20">
                             {/* Branch line */}
-                            <div className="absolute -top-6 left-1/2 w-[2px] h-6 bg-[var(--border)] group-hover:bg-[var(--accent)] transition-colors -translate-x-1/2" />
+                            <div className="absolute -top-6 left-1/2 w-[1px] h-6 bg-[#1a1a1a] group-hover:bg-[var(--accent)] transition-colors -translate-x-1/2" />
                             
                             <div 
-                              className="relative flex items-center justify-center rounded-full bg-[var(--bg-primary)] border-2 border-[var(--border)] group-hover:border-[var(--accent)] transition-all duration-300 group-hover:shadow-[var(--accent)]/20 group-hover:shadow-xl group-hover:scale-110 cursor-default"
+                              className="relative flex items-center justify-center rounded-full bg-[#050505] border border-[#1a1a1a] group-hover:border-[var(--accent)] transition-all duration-500 cursor-default"
                               style={{ width: size, height: size }}
                             >
-                              <RingProgress pct={pct} size={size - 12} />
-                              <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-2">
-                                <span className="text-[9px] font-bold text-[var(--accent)] uppercase tracking-widest leading-none">{label}</span>
-                                <span className="text-xs font-black text-[var(--text-primary)] leading-tight mt-1 truncate w-[80%]">{skill.category}</span>
-                                <span className="text-[9px] text-[var(--text-tertiary)] mt-1 font-semibold">Lvl {level}</span>
+                              <RingProgress pct={pct} size={size - 16} />
+                              <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-3">
+                                <span className="text-[8px] font-bold text-[var(--accent)] uppercase tracking-widest leading-none">{label}</span>
+                                <span className="text-[11px] font-bold text-[var(--text-primary)] leading-tight mt-1.5 truncate w-[85%]">{skill.category}</span>
+                                <span className="text-[8px] text-[var(--text-tertiary)] mt-1.5 font-bold uppercase tracking-tighter">LVL {level}</span>
                               </div>
                             </div>
                           </div>
@@ -373,7 +373,7 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
                   </div>
                 ) : (
                   <div className="h-full w-full flex items-center justify-center relative z-10">
-                    <p className="text-sm text-[var(--text-tertiary)] py-4">Complete flows to unlock skills.</p>
+                    <p className="text-[11px] font-bold uppercase tracking-widest text-[var(--text-tertiary)] py-4">Complete flows to unlock skills.</p>
                   </div>
                 )}
               </div>
@@ -381,16 +381,16 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
 
             {/* Quick stats */}
             <div>
-              <h2 className="text-xs font-bold uppercase tracking-widest text-[var(--text-tertiary)] mb-4">At a Glance</h2>
-              <div className="bg-[var(--bg-secondary)] border border-[var(--border)] rounded-xl p-5 space-y-3 text-sm">
+              <h2 className="text-[10px] font-bold uppercase tracking-[0.1em] text-[var(--text-tertiary)] mb-4">At a Glance</h2>
+              <div className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-md p-6 space-y-4 text-xs">
                 {[
                   { label: 'Flows liked',          value: likeCount ?? 0 },
                   { label: 'Forks received',        value: totalForksOnCreatedFlows },
-                  { label: 'Longest streak',        value: `${profile.longest_streak || 0} days` },
+                  { label: 'Longest streak',        value: `${profile.longest_streak || 0}d` },
                   { label: 'Avg saved / flow',      value: (completions?.length ?? 0) > 0 ? `${Math.round(hoursSaved / completions!.length)}h` : '—' },
                 ].map(({ label, value }) => (
                   <div key={label} className="flex justify-between items-center">
-                    <span className="text-[var(--text-secondary)]">{label}</span>
+                    <span className="text-[var(--text-tertiary)] font-bold uppercase tracking-widest text-[9px]">{label}</span>
                     <span className="font-semibold text-[var(--text-primary)]">{value}</span>
                   </div>
                 ))}
@@ -398,20 +398,20 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
             </div>
 
             {/* Share CTA */}
-            <div className="bg-[var(--accent-subtle)] border border-[var(--accent-border)] rounded-xl p-5 text-center space-y-3">
+            <div className="bg-[#0f1012] border border-[#1a1a1a] rounded-md p-6 text-center space-y-4">
               <div className="flex flex-col items-center gap-2">
-                <Trophy className="h-6 w-6 text-[var(--accent)]" />
+                <Trophy className="h-5 w-5 text-[var(--accent)] mb-1" />
                 <Link 
                   href={`/resume/${profile.username}`}
-                  className="text-sm font-semibold text-[var(--accent-text)] hover:underline flex items-center gap-1.5"
+                  className="text-xs font-bold uppercase tracking-[0.1em] text-[var(--text-primary)] hover:text-[var(--accent)] transition-colors flex items-center gap-2"
                 >
-                  View AI Resume <ExternalLink className="h-3.5 w-3.5" />
+                  AI Resume <ExternalLink className="h-3 w-3" />
                 </Link>
               </div>
-              <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
+              <p className="text-[11px] text-[var(--text-secondary)] leading-relaxed font-medium">
                 Professional, printable view of your verified skills and completions.
               </p>
-              <div className="flex justify-center">
+              <div className="flex justify-center pt-2">
                 <ProfileShareButton username={profile.username} />
               </div>
             </div>
