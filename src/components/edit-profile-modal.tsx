@@ -165,12 +165,18 @@ export function EditProfileModal({ profile, onClose }: EditProfileModalProps) {
   )
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-300 overflow-y-auto Selection:bg-[var(--accent)]/30">
-      <div className="bg-[var(--bg-primary)] border-t sm:border border-[var(--border)] rounded-t-[20px] sm:rounded-[8px] w-full max-w-4xl shadow-2xl animate-in slide-in-from-bottom-6 duration-500 sm:duration-300 flex flex-col max-h-[95vh] sm:max-h-[90vh] overflow-hidden">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 overflow-hidden selection:bg-[var(--accent)]/30">
+      {/* Backdrop with theme-aware blur */}
+      <div 
+        className="absolute inset-0 bg-white/40 dark:bg-black/60 backdrop-blur-xl animate-backdrop"
+        onClick={onClose}
+      />
+
+      <div className="relative w-full max-w-4xl bg-[var(--bg-primary)] border border-[var(--border)] rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden animate-scale-in">
         
-        {/* Header: High Density */}
-        <div className="flex items-center justify-between p-4 sm:p-6 border-b border-[var(--border)] bg-[var(--bg-secondary)]/50 shrink-0">
-          <div className="flex items-center gap-3">
+        {/* Fixed Header */}
+        <div className="shrink-0 flex items-center justify-between px-6 py-4 border-b border-[var(--border)] bg-[var(--bg-primary)]/80 backdrop-blur-md">
+          <div className="flex items-center gap-6">
              <div className="p-2 bg-[var(--bg-tertiary)] rounded-[6px] border border-[var(--border)]">
                <User className="h-4 w-4 text-[var(--accent)]" />
              </div>
@@ -211,7 +217,8 @@ export function EditProfileModal({ profile, onClose }: EditProfileModalProps) {
           ))}
         </div>
 
-        <form onSubmit={handleSave} className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-8 custom-scrollbar">
+        {/* Scrollable Content Area */}
+        <form onSubmit={handleSave} className="flex-1 overflow-y-auto p-6 sm:p-10 space-y-10 custom-scrollbar">
           
           <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12">
             {/* Sidebar: Identity Shuffle (Sticky Layout) */}
@@ -503,31 +510,28 @@ export function EditProfileModal({ profile, onClose }: EditProfileModalProps) {
           </div>
         </form>
 
-        {/* Footer: Compressed Action Bar - Stabilized with Solid Background and Shadow */}
-        <div className="flex items-center gap-3 p-4 sm:p-6 border-t border-[var(--border)] bg-[var(--bg-secondary)] shadow-[0_-10px_30px_rgba(0,0,0,0.2)] shrink-0 z-50">
+        {/* Fixed Footer Action Bar */}
+        <div className="shrink-0 p-4 sm:p-6 border-t border-[var(--border)] bg-[var(--bg-primary)]/90 backdrop-blur-sm flex items-center justify-between gap-4">
           <button
             type="button"
             onClick={onClose}
-            disabled={loading}
-            className="px-6 py-3 text-[10px] font-black uppercase tracking-widest text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-all hover:bg-[var(--bg-tertiary)] rounded-[6px] border border-transparent hover:border-[var(--border)]"
+            className="px-6 py-2.5 text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
           >
-            Discard
+            DISCARD
           </button>
+          
           <button
-            type="button"
-            onClick={handleSave}
+            type="submit"
             disabled={loading}
-            className="flex-1 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-[10px] font-black uppercase tracking-widest py-3.5 rounded-[6px] transition-all shadow-xl shadow-[var(--accent)]/20 disabled:opacity-50 flex items-center justify-center gap-2.5 active:scale-[0.98]"
+            onClick={handleSave}
+            className="flex-1 max-w-lg flex items-center justify-center gap-2 bg-[var(--accent)] hover:bg-[var(--accent-hover)] disabled:opacity-50 text-white font-bold py-3.5 px-6 rounded-xl transition-all shadow-lg shadow-[var(--accent)]/20 active:scale-[0.98]"
           >
             {loading ? (
-              <>
-                <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                <span>Syncing Data...</span>
-              </>
+              <div className="h-5 w-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
             ) : (
               <>
-                <Save className="h-3.5 w-3.5" />
-                <span>Commit Identity Changes</span>
+                <Save className="h-5 w-5" />
+                COMMIT IDENTITY CHANGES
               </>
             )}
           </button>

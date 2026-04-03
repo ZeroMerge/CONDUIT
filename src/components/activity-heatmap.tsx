@@ -169,7 +169,7 @@ export function ActivityHeatmap({ completions }: ActivityHeatmapProps) {
 
               {/* The Actual Grid */}
               <div 
-                className="flex gap-1 transition-transform duration-700 cubic-bezier(0.4, 0, 0.2, 1)"
+                className="flex gap-1 transition-transform duration-700 [transition-timing-function:cubic-bezier(0.4,0,0.2,1)]"
                 style={{ transform: `translateX(-${viewIndex * 14}px)` }}
               >
                 {weeks.map((week, wi) => {
