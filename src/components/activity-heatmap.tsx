@@ -2,6 +2,7 @@
 'use client'
 
 import { useMemo } from 'react'
+import { Calendar } from 'lucide-react'
 
 interface ActivityHeatmapProps {
   completions: { completed_at: string }[]
@@ -21,13 +22,11 @@ function getWeeksData(completions: { completed_at: string }[]) {
 
   // Build 52 weeks of dates ending today
   const today = new Date()
-  today.setHours(0, 0, 0, 0)
+  today.setHours(23, 59, 59, 999)
 
-  // Start from the Sunday 52 weeks ago
   const startDate = new Date(today)
   startDate.setDate(startDate.getDate() - 52 * 7)
-  // Roll back to Sunday
-  startDate.setDate(startDate.getDate() - startDate.getDay())
+  startDate.setDate(startDate.getDate() - startDate.getDay()) // Roll to Sunday
 
   const weeks: { date: Date; count: number; key: string }[][] = []
   let currentWeek: { date: Date; count: number; key: string }[] = []
@@ -48,16 +47,17 @@ function getWeeksData(completions: { completed_at: string }[]) {
 }
 
 function getMonthLabels(weeks: { date: Date }[][]) {
-  const labels: { label: string; col: number }[] = []
-  let lastMonth = -1
-  weeks.forEach((week, col) => {
+  const labels: { label: string; index: number }[] = []
+  let prevMonth = -1
+  
+  weeks.forEach((week, i) => {
     const month = week[0].date.getMonth()
-    if (month !== lastMonth) {
+    if (month !== prevMonth) {
       labels.push({
         label: week[0].date.toLocaleString('default', { month: 'short' }),
-        col,
+        index: i,
       })
-      lastMonth = month
+      prevMonth = month
     }
   })
   return labels
@@ -65,10 +65,10 @@ function getMonthLabels(weeks: { date: Date }[][]) {
 
 const INTENSITY = [
   'bg-[var(--bg-tertiary)]',              // 0 — empty
-  'bg-[var(--accent)] opacity-25',         // 1
-  'bg-[var(--accent)] opacity-50',         // 2
-  'bg-[var(--accent)] opacity-75',         // 3+
-  'bg-[var(--accent)]',                    // 4+
+  'bg-emerald-500/20',                   // 1
+  'bg-emerald-500/40',                   // 2
+  'bg-emerald-500/70',                   // 3+
+  'bg-emerald-500',                      // 4+
 ]
 
 function cellClass(count: number): string {
@@ -79,77 +79,78 @@ function cellClass(count: number): string {
   return INTENSITY[4]
 }
 
-const DAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+const DAY_LABELS = ['', 'Mon', '', 'Wed', '', 'Fri', '']
 
 export function ActivityHeatmap({ completions }: ActivityHeatmapProps) {
   const weeks = useMemo(() => getWeeksData(completions), [completions])
   const monthLabels = useMemo(() => getMonthLabels(weeks), [weeks])
-
   const total = completions.length
 
   return (
-    <div className="w-full overflow-x-auto">
-      <div className="flex items-center justify-between mb-3">
-        <p className="text-xs font-semibold uppercase tracking-widest text-[var(--text-tertiary)]">
-          Activity
-        </p>
-        <p className="text-xs text-[var(--text-tertiary)]">
-          {total} flow{total !== 1 ? 's' : ''} completed in the past year
-        </p>
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--text-tertiary)] flex items-center gap-2">
+           <Calendar className="h-3.5 w-3.5" />
+           Activity Pulse
+        </h3>
+        <span className="text-[10px] font-bold text-[var(--text-tertiary)] uppercase">{total} Total</span>
       </div>
 
-      <div className="inline-block min-w-full">
-        {/* Month labels */}
-        <div className="flex mb-1 pl-8">
-          {monthLabels.map(({ label, col }) => (
-            <div
-              key={`${label}-${col}`}
-              className="text-xs text-[var(--text-tertiary)] absolute"
-              style={{ marginLeft: col * 13 }}
-            >
-              {label}
-            </div>
-          ))}
-          {/* Spacer to push the month labels correctly */}
-          <div style={{ height: 16, position: 'relative', width: weeks.length * 13 }} />
-        </div>
-
-        {/* Grid: days on Y axis, weeks on X axis */}
-        <div className="flex gap-1">
-          {/* Day labels */}
-          <div className="flex flex-col gap-0.5 mr-1">
-            {DAY_LABELS.map((day, i) => (
-              <div
-                key={day}
-                className="h-3 text-[10px] text-[var(--text-tertiary)] leading-3 flex items-center"
-                style={{ visibility: i % 2 === 1 ? 'visible' : 'hidden' }}
-              >
-                {day}
-              </div>
-            ))}
-          </div>
-
-          {/* Cells */}
-          {weeks.map((week, wi) => (
-            <div key={wi} className="flex flex-col gap-0.5">
-              {week.map((day) => (
-                <div
-                  key={day.key}
-                  title={`${day.key}: ${day.count} completion${day.count !== 1 ? 's' : ''}`}
-                  className={`w-3 h-3 rounded-sm transition-all duration-150 cursor-default ${cellClass(day.count)}`}
-                />
+      <div className="relative group">
+        <div className="overflow-x-auto scrollbar-hide select-none">
+          <div className="inline-block min-w-full">
+            
+            {/* Month Labels aligned to grid */}
+            <div className="flex h-4 mb-2 ml-7 relative">
+              {monthLabels.map((m, i) => (
+                <span 
+                  key={i} 
+                  className="text-[9px] font-bold text-[var(--text-tertiary)] absolute uppercase tracking-tighter"
+                  style={{ left: `${m.index * 13}px` }}
+                >
+                  {m.label}
+                </span>
               ))}
             </div>
-          ))}
+
+            {/* Main Grid */}
+            <div className="flex gap-1">
+              {/* Y-Axis: Days */}
+              <div className="flex flex-col gap-[3px] w-6 shrink-0 pt-[2px]">
+                {DAY_LABELS.map((day, i) => (
+                  <span key={i} className="text-[8px] font-bold text-[var(--text-tertiary)] h-2.5 leading-[10px] uppercase">
+                    {day}
+                  </span>
+                ))}
+              </div>
+
+              {/* X-Axis: Weeks */}
+              <div className="flex gap-[3px]">
+                {weeks.map((week, wi) => (
+                  <div key={wi} className="flex flex-col gap-[3px]">
+                    {week.map((day) => (
+                      <div
+                        key={day.key}
+                        title={`${day.key}: ${day.count} completion${day.count !== 1 ? 's' : ''}`}
+                        className={`w-2.5 h-2.5 rounded-[1px] transition-all duration-200 cursor-crosshair border border-black/5 dark:border-white/5 ${cellClass(day.count)} hover:ring-1 hover:ring-[var(--accent)] hover:scale-110 z-10`}
+                      />
+                    ))}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Legend */}
-        <div className="flex items-center gap-1.5 mt-3 justify-end">
-          <span className="text-xs text-[var(--text-tertiary)]">Less</span>
-          {INTENSITY.map((cls, i) => (
-            <div key={i} className={`w-3 h-3 rounded-sm ${cls}`} />
-          ))}
-          <span className="text-xs text-[var(--text-tertiary)]">More</span>
+        {/* Tactile Legend */}
+        <div className="flex items-center justify-end gap-1.5 mt-4 opacity-60 group-hover:opacity-100 transition-opacity">
+          <span className="text-[9px] font-bold text-[var(--text-tertiary)] uppercase tracking-tighter">Quiet</span>
+          <div className="flex gap-1">
+            {INTENSITY.map((cls, i) => (
+              <div key={i} className={`w-2 h-2 rounded-[1px] ${cls} border border-black/5 dark:border-white/5`} />
+            ))}
+          </div>
+          <span className="text-[9px] font-bold text-[var(--text-tertiary)] uppercase tracking-tighter">Busy</span>
         </div>
       </div>
     </div>

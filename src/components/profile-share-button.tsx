@@ -17,35 +17,41 @@ export function ProfileShareButton({ username }: ProfileShareButtonProps) {
 
     try {
       if (navigator.share) {
+        // Native Share (Mobile)
         await navigator.share({
           title: `${username}'s AI Builder Profile — Conduit`,
           text: `Check out ${username}'s verified AI workflow portfolio on Conduit.`,
           url,
         })
       } else {
+        // Clipboard Fallback (Desktop)
         await navigator.clipboard.writeText(url)
         setCopied(true)
-        toast.success('Profile link copied to clipboard')
+        toast.success(`Profile link copied to clipboard`)
         setTimeout(() => setCopied(false), 2000)
       }
-    } catch {
-      // User cancelled share or clipboard failed
+    } catch (err) {
+      if (err instanceof Error && err.name !== 'AbortError') {
+        // Only show toast if it's a real failure, not user cancellation
+        toast.error('Could not share profile')
+        console.error('Share Error:', err)
+      }
     }
   }
 
   return (
     <button
       onClick={handleShare}
-      className="flex items-center gap-2 px-4 py-2 text-sm font-medium border border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--border-strong)] hover:text-[var(--text-primary)] rounded-lg transition-all duration-150"
+      className="flex items-center justify-center gap-2 px-4 py-2 text-xs font-black uppercase tracking-widest bg-[var(--bg-secondary)] border border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--border-strong)] hover:text-[var(--text-primary)] rounded-[6px] transition-all duration-150"
     >
       {copied ? (
         <>
-          <Check className="h-4 w-4 text-[var(--verified)]" />
+          <Check className="h-3.5 w-3.5 text-emerald-500" />
           Copied
         </>
       ) : (
         <>
-          <Share2 className="h-4 w-4" />
+          <Share2 className="h-3.5 w-3.5" />
           Share
         </>
       )}
