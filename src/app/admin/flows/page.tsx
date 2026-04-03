@@ -115,168 +115,162 @@ export default function AdminFlowsPage() {
   ]
 
   return (
-    <div className="space-y-6 fade-in animate-fade-up">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl md:text-3xl font-geist font-bold text-[var(--text-primary)]">
+          <h1 className="text-2xl font-geist font-bold text-[var(--text-primary)]">
             Flow Management
           </h1>
-          <p className="text-sm font-medium text-[var(--text-secondary)] mt-1">
+          <p className="text-sm text-[var(--text-secondary)] mt-1">
             {flows.length} flows total
           </p>
         </div>
         <button
           onClick={fetchFlows}
-          className="inline-flex items-center justify-center gap-2 text-sm font-semibold text-[var(--text-primary)] bg-[var(--bg-secondary)] hover:bg-[var(--bg-tertiary)] transition-colors px-4 py-2 border border-[var(--border)] rounded-xl press-scale shrink-0"
+          className="flex items-center gap-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors px-3 py-2 border border-[var(--border)] rounded"
         >
           <RefreshCw className="h-4 w-4" />
-          Refresh Database
+          Refresh
         </button>
       </div>
 
-      {/* Filters & Search */}
-      <div className="flex flex-col md:flex-row gap-4">
-        <div className="flex gap-2 overflow-x-auto pb-1 md:pb-0 scrollbar-hide snap-x px-1 -ml-1">
+      {/* Filters */}
+      <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex gap-2">
           {filterOptions.map((opt) => (
             <button
               key={opt.value}
               onClick={() => setFilter(opt.value)}
-              className={`snap-start px-4 py-2 rounded-xl text-sm font-bold transition-all duration-200 shrink-0 press-scale ${
+              className={`px-3 py-1.5 rounded text-sm font-medium transition-colors ${
                 filter === opt.value
-                  ? 'bg-[var(--text-primary)] text-[var(--bg-primary)] shadow-md shadow-black/10'
-                  : 'bg-[var(--bg-secondary)] border border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--border-strong)] hover:text-[var(--text-primary)]'
+                  ? 'bg-[var(--accent)] text-white'
+                  : 'bg-[var(--bg-secondary)] border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
               }`}
             >
               {opt.label}
             </button>
           ))}
         </div>
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-tertiary)]" />
+        <div className="relative flex-1 max-w-xs">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-tertiary)]" />
           <input
             type="text"
             placeholder="Search flows, creators..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 h-10 text-sm font-medium bg-[var(--bg-secondary)] border border-[var(--border)] rounded-xl outline-none focus:border-[var(--border-strong)] focus:ring-2 focus:ring-[var(--accent)] transition-all"
+            className="w-full pl-9 pr-3 py-1.5 text-sm bg-[var(--bg-secondary)] border border-[var(--border)] rounded outline-none focus:border-[var(--border-strong)]"
           />
         </div>
       </div>
 
       {/* Flow Table */}
       {loading ? (
-        <div className="flex items-center justify-center py-24">
-          <Loader2 className="h-8 w-8 animate-spin text-[var(--accent)]" />
+        <div className="flex items-center justify-center py-16">
+          <Loader2 className="h-6 w-6 animate-spin text-[var(--text-tertiary)]" />
         </div>
       ) : filtered.length === 0 ? (
-        <div className="text-center py-24 bg-[var(--bg-secondary)] border border-[var(--border)] rounded-2xl">
-          <p className="text-[var(--text-tertiary)] text-sm font-medium">No flows found matching your criteria</p>
+        <div className="text-center py-16 text-[var(--text-tertiary)] text-sm">
+          No flows found
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-3">
           {filtered.map((flow) => (
             <div
               key={flow.id}
-              className="bg-[var(--bg-secondary)] border border-[var(--border)] rounded-2xl p-5 md:p-6 transition-all duration-200 hover:border-[var(--border-strong)] hover:shadow-sm"
+              className="bg-[var(--bg-secondary)] border border-[var(--border)] rounded-lg p-5"
             >
-              <div className="flex flex-col lg:flex-row lg:items-start gap-4">
+              <div className="flex items-start gap-4">
                 {/* Info */}
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-3 flex-wrap pr-4">
-                       <h3 className="text-lg font-bold text-[var(--text-primary)] truncate">
-                         {flow.title}
-                       </h3>
-                       <TrustBadge status={flow.status} size="sm" />
-                       <span className="text-[10px] font-bold uppercase tracking-widest bg-[var(--bg-primary)] border border-[var(--border)] px-2 py-1 rounded-lg text-[var(--text-secondary)]">
-                         {flow.category}
-                       </span>
-                       {flow.parent_flow_id && (
-                         <span className="flex items-center gap-1.5 px-2 py-1 bg-[var(--bg-primary)] border border-[var(--border)] px-2 py-1 rounded-lg text-[10px] uppercase font-bold tracking-widest text-[var(--accent)]">
-                           <GitFork className="h-3 w-3" /> Forked
-                         </span>
-                       )}
-                    </div>
+                  <div className="flex items-center gap-3 flex-wrap">
+                    <h3 className="text-base font-semibold text-[var(--text-primary)] truncate">
+                      {flow.title}
+                    </h3>
+                    <TrustBadge status={flow.status} size="sm" />
+                    <span className="text-xs bg-[var(--bg-tertiary)] border border-[var(--border)] px-2 py-0.5 rounded text-[var(--text-secondary)]">
+                      {flow.category}
+                    </span>
+                    {flow.parent_flow_id && (
+                      <span className="flex items-center gap-1 text-xs text-[var(--text-tertiary)]">
+                        <GitFork className="h-3 w-3" /> Fork
+                      </span>
+                    )}
                   </div>
 
-                  <p className="text-sm font-medium text-[var(--text-secondary)] line-clamp-2 md:line-clamp-1 max-w-3xl leading-relaxed">
+                  <p className="text-sm text-[var(--text-secondary)] mt-1 line-clamp-2">
                     {flow.description}
                   </p>
 
-                  <div className="flex items-center gap-4 mt-4 overflow-x-auto pb-1 scrollbar-hide text-xs font-semibold text-[var(--text-tertiary)]">
+                  <div className="flex items-center gap-4 mt-3 text-xs text-[var(--text-tertiary)]">
                     {(flow.creator as any) && (
-                      <div className="flex items-center gap-1.5 shrink-0 px-2 py-1 rounded-lg bg-[var(--bg-primary)] border border-[var(--border)] text-[var(--text-secondary)]">
+                      <div className="flex items-center gap-1.5">
                         <Avatar seed={(flow.creator as any).avatar_seed} size={16} />
                         <span>{(flow.creator as any).username}</span>
                       </div>
                     )}
-                    <span className="shrink-0">{new Date(flow.created_at).toLocaleDateString()}</span>
-                    <span className="shrink-0">{flow.run_count} runs</span>
-                    <span className="shrink-0">{flow.completion_count} wins</span>
-                    <span className="shrink-0">{flow.like_count} likes</span>
-                    <span className="shrink-0">{flow.fork_count} forks</span>
+                    <span>{new Date(flow.created_at).toLocaleDateString()}</span>
+                    <span>{flow.run_count} runs</span>
+                    <span>{flow.completion_count} completions</span>
+                    <span>{flow.like_count} likes</span>
+                    <span>{flow.fork_count} forks</span>
                   </div>
                 </div>
 
                 {/* Actions */}
-                <div className="flex lg:flex-col items-center justify-start lg:items-end gap-2 flex-shrink-0 flex-wrap shrink-0 mt-2 lg:mt-0 pt-4 lg:pt-0 border-t lg:border-t-0 border-[var(--border)]">
-                   <div className="flex gap-2 w-full lg:w-auto">
-                    {flow.status !== 'verified' && (
-                      <button
-                        onClick={() => updateFlowStatus(flow.id, 'verified')}
-                        disabled={actionLoading !== null}
-                        className="flex-1 lg:flex-none flex justify-center items-center gap-1.5 px-4 py-2 text-[11px] uppercase tracking-widest font-bold bg-[var(--accent)]/10 text-[var(--accent)] border border-[var(--accent)]/20 rounded-xl hover:bg-[var(--accent)] hover:text-white transition-all disabled:opacity-50 press-scale"
-                        title="Mark as verified"
-                      >
-                        {actionLoading === flow.id + 'verified' ? (
-                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                        ) : (
-                          <CheckCircle className="h-3.5 w-3.5" />
-                        )}
-                        Verify
-                      </button>
-                    )}
+                <div className="flex items-center gap-2 flex-shrink-0 flex-wrap justify-end">
+                  <Link
+                    href={`/flow/${flow.id}`}
+                    target="_blank"
+                    className="p-2 rounded border border-[var(--border)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:border-[var(--border-strong)] transition-colors"
+                    title="View flow"
+                  >
+                    <ExternalLink className="h-4 w-4" />
+                  </Link>
 
-                    {flow.status !== 'unverified' && (
-                      <button
-                        onClick={() => updateFlowStatus(flow.id, 'unverified')}
-                        disabled={actionLoading !== null}
-                        className="flex-1 lg:flex-none flex justify-center items-center gap-1.5 px-4 py-2 text-[11px] uppercase tracking-widest font-bold bg-[var(--bg-primary)] text-[var(--text-secondary)] border border-[var(--border)] rounded-xl hover:bg-amber-50 hover:text-amber-700 hover:border-amber-200 dark:hover:bg-amber-950/20 dark:hover:text-amber-400 transition-all disabled:opacity-50 press-scale"
-                        title="Revert to unverified"
-                      >
-                        {actionLoading === flow.id + 'unverified' ? (
-                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                        ) : (
-                          <XCircle className="h-3.5 w-3.5" />
-                        )}
-                        Unverify
-                      </button>
-                    )}
-                   </div>
-
-                  <div className="flex gap-2 w-full lg:w-auto">
-                     <Link
-                      href={`/flow/${flow.id}`}
-                      target="_blank"
-                      className="flex-1 lg:flex-none flex justify-center items-center px-4 py-2 rounded-xl border border-[var(--border)] bg-[var(--bg-primary)] text-[var(--text-primary)] hover:border-[var(--border-strong)] transition-all press-scale"
-                      title="View flow"
-                    >
-                      <ExternalLink className="h-4 w-4" />
-                    </Link>
-
+                  {flow.status !== 'verified' && (
                     <button
-                      onClick={() => deleteFlow(flow.id, flow.title)}
+                      onClick={() => updateFlowStatus(flow.id, 'verified')}
                       disabled={actionLoading !== null}
-                      className="flex-1 lg:flex-none flex justify-center items-center px-4 py-2 rounded-xl border border-[var(--border)] bg-[var(--bg-primary)] text-[var(--text-tertiary)] hover:text-[var(--risky)] hover:border-red-200 dark:hover:border-red-900 transition-all disabled:opacity-50 press-scale"
-                      title="Delete flow"
+                      className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-[var(--accent-subtle)] text-[var(--accent-text)] border border-[var(--accent-border)] rounded hover:bg-[var(--accent)] hover:text-white transition-colors disabled:opacity-50"
+                      title="Mark as verified"
                     >
-                      {actionLoading === flow.id + 'delete' ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
+                      {actionLoading === flow.id + 'verified' ? (
+                        <Loader2 className="h-3 w-3 animate-spin" />
                       ) : (
-                        <Trash2 className="h-4 w-4" />
+                        <CheckCircle className="h-3 w-3" />
                       )}
+                      Verify
                     </button>
-                  </div>
+                  )}
+
+                  {flow.status !== 'unverified' && (
+                    <button
+                      onClick={() => updateFlowStatus(flow.id, 'unverified')}
+                      disabled={actionLoading !== null}
+                      className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-[var(--bg-tertiary)] text-[var(--text-secondary)] border border-[var(--border)] rounded hover:bg-amber-50 hover:text-amber-700 hover:border-amber-200 dark:hover:bg-amber-950/20 dark:hover:text-amber-400 transition-colors disabled:opacity-50"
+                      title="Revert to unverified"
+                    >
+                      {actionLoading === flow.id + 'unverified' ? (
+                        <Loader2 className="h-3 w-3 animate-spin" />
+                      ) : (
+                        <XCircle className="h-3 w-3" />
+                      )}
+                      Unverify
+                    </button>
+                  )}
+
+                  <button
+                    onClick={() => deleteFlow(flow.id, flow.title)}
+                    disabled={actionLoading !== null}
+                    className="p-1.5 rounded border border-[var(--border)] text-[var(--text-tertiary)] hover:text-[var(--risky)] hover:border-red-200 dark:hover:border-red-900 transition-colors disabled:opacity-50"
+                    title="Delete flow"
+                  >
+                    {actionLoading === flow.id + 'delete' ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Trash2 className="h-4 w-4" />
+                    )}
+                  </button>
                 </div>
               </div>
             </div>
