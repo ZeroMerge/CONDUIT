@@ -27,8 +27,8 @@ export function CategoryFilter({ activeCategory = 'All' }: { activeCategory?: st
   }
 
   return (
-    <div className="relative -mx-4 px-4 sm:mx-0 sm:px-0">
-      <div className="flex gap-2.5 overflow-x-auto snap-x scrollbar-hide py-4 px-1">
+    <div className="relative -mx-4 sm:mx-0 overflow-hidden">
+      <div className="flex gap-2.5 overflow-x-auto scrollbar-hide py-2 px-4 sm:px-1">
         {CATEGORIES.map((category) => {
           const isActive = 
             category.toLowerCase() === activeCategory.toLowerCase() || 
@@ -39,10 +39,10 @@ export function CategoryFilter({ activeCategory = 'All' }: { activeCategory?: st
               key={category}
               onClick={() => handleCategoryClick(category)}
               className={`
-                snap-child flex-shrink-0
-                px-5 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all duration-300 press-scale
+                flex-shrink-0
+                px-4 py-1.5 rounded-md text-sm font-semibold whitespace-nowrap transition-all duration-300 press-scale
                 ${isActive 
-                  ? 'bg-[var(--text-primary)] text-[var(--bg-primary)] shadow-lg shadow-[var(--text-primary)]/10 scale-105' 
+                  ? 'bg-[var(--text-primary)] text-[var(--bg-primary)] shadow-md' 
                   : 'bg-[var(--bg-secondary)] border border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--border-strong)] hover:text-[var(--text-primary)]'
                 }
               `}

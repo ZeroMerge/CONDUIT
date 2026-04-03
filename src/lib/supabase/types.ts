@@ -17,6 +17,7 @@ export interface Database {
           total_time_saved_minutes: number
           total_xp: number
           is_admin: boolean
+          avatar_bg_color: string | null
         }
         Insert: {
           id: string
@@ -30,6 +31,7 @@ export interface Database {
           total_time_saved_minutes?: number
           total_xp?: number
           is_admin?: boolean
+          avatar_bg_color?: string | null
         }
         Update: {
           id?: string
@@ -43,6 +45,7 @@ export interface Database {
           total_time_saved_minutes?: number
           total_xp?: number
           is_admin?: boolean
+          avatar_bg_color?: string | null
         }
         Relationships: []
       }
