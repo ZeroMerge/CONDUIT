@@ -26,7 +26,7 @@ export function ExploreClient({ flows, globalTimeSavedMinutes: initialMinutes }:
   useEffect(() => {
     const fetchLeaderboard = async () => {
       const { data } = await supabase.from('profiles').select('*').order('total_xp', { ascending: false }).limit(6)
-      if (data) setLeaderboard(data)
+      if (data) setLeaderboard(data as any as Profile[])
     }
     fetchLeaderboard()
 

@@ -43,7 +43,10 @@ export default function AdminFlowsPage() {
 
       const { data, error } = await query
       if (error) throw error
-      setFlows(data || [])
+      
+      // Cast data to handle the creator:profiles join properly with custom types
+      const typedData = (data || []) as unknown as (Flow & { creator: Profile | null })[]
+      setFlows(typedData)
     } catch (err) {
       toast.error('Failed to load flows')
     } finally {

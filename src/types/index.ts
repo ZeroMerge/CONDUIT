@@ -1,6 +1,7 @@
 export interface Profile {
   id: string
   username: string
+  full_name: string | null
   avatar_seed: string
   avatar_bg_color?: string | null
   bio: string | null
@@ -13,6 +14,16 @@ export interface Profile {
   is_admin?: boolean
   is_verified?: boolean
   trust_score?: number
+  website_url?: string | null
+  twitter_handle?: string | null
+  github_handle?: string | null
+  location?: string | null
+  company?: string | null
+  readme_markdown?: string | null
+  social_links?: any | null
+  pinned_flow_ids?: string[] | null
+  flows?: any[]
+  completions?: any[]
 }
 
 export interface Flow {

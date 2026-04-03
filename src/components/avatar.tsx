@@ -2,23 +2,30 @@
 
 import { avatarUrl } from '@/lib/avatar'
 import { BadgeCheck } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 interface AvatarProps {
   seed: string
   size?: number
   verified?: boolean
   bg_color?: string | null
+  className?: string
 }
 
-export function Avatar({ seed, size = 32, verified = false, bg_color = 'transparent' }: AvatarProps) {
+export function Avatar({ seed, size = 32, verified = false, bg_color = 'transparent', className }: AvatarProps) {
   return (
-    <div className="relative inline-flex flex-shrink-0" style={{ width: size, height: size }}>
+    <div 
+      className={cn("relative inline-flex flex-shrink-0 group overflow-visible", className)} 
+      style={{ 
+        width: className?.includes('w-') ? undefined : size, 
+        height: className?.includes('h-') ? undefined : size 
+      }}
+    >
       <div 
-        className={`w-full h-full rounded-full overflow-hidden border p-[1px] transition-all duration-300 ${
-          verified 
-          ? 'border-[var(--verified)] shadow-[0_0_15px_rgba(16,185,129,0.2)]' 
-          : 'border-[var(--border)]'
-        }`}
+        className={cn(
+          "w-full h-full rounded-full overflow-hidden transition-all duration-500 flex items-center justify-center",
+          verified && "ring-2 ring-[var(--verified)] ring-offset-2 ring-offset-[var(--bg-primary)] shadow-lg shadow-[var(--verified)]/10"
+        )}
         style={{ backgroundColor: bg_color || 'transparent' }}
       >
         <img
@@ -26,13 +33,13 @@ export function Avatar({ seed, size = 32, verified = false, bg_color = 'transpar
           alt="Avatar"
           width={size}
           height={size}
-          className="w-full h-full object-cover rounded-full"
+          className="w-full h-full object-cover rounded-full group-hover:scale-105 transition-transform duration-500"
         />
       </div>
       {verified && (
         <div 
-          className="absolute -bottom-1 -right-1 bg-[var(--verified)] text-white rounded-full flex items-center justify-center p-0.5 shadow-lg border-[2px] border-[var(--bg-primary)]"
-          style={{ width: Math.max(14, size * 0.4), height: Math.max(14, size * 0.4) }}
+          className="absolute -bottom-1 -right-1 bg-[var(--verified)] text-white rounded-full flex items-center justify-center p-0.5 shadow-xl border-[3px] border-[var(--bg-primary)] z-20"
+          style={{ width: Math.max(16, size * 0.35), height: Math.max(16, size * 0.35) }}
         >
           <BadgeCheck className="w-full h-full" strokeWidth={3} />
         </div>

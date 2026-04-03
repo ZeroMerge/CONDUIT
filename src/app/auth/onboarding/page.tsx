@@ -70,6 +70,7 @@ export default function OnboardingPage() {
 
             setProfile({
                 ...newProfile,
+                full_name: null,
                 bio: null,
                 created_at: new Date().toISOString(),
                 current_streak: 0,

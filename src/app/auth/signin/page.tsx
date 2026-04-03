@@ -7,6 +7,7 @@ import { Eye, EyeOff } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
 import { useUserStore } from '@/lib/stores/user'
 import { toast } from 'sonner'
+import { Profile } from '@/types'
 
 import { ResponsiveContainer } from '@/components/ui/responsive-container'
 
@@ -46,7 +47,7 @@ function SignInContent() {
           .single()
 
         if (profile) {
-          setProfile(profile)
+          setProfile(profile as any as Profile)
         }
 
         // Redirect to previous page or home

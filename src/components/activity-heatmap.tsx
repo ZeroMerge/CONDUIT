@@ -1,8 +1,9 @@
 // src/components/activity-heatmap.tsx
 'use client'
 
-import { useMemo } from 'react'
-import { Calendar } from 'lucide-react'
+import { useMemo, useState } from 'react'
+import { Calendar, ChevronLeft, ChevronRight } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 interface ActivityHeatmapProps {
   completions: { completed_at: string }[]
@@ -13,20 +14,18 @@ function getDateKey(date: Date): string {
 }
 
 function getWeeksData(completions: { completed_at: string }[]) {
-  // Build a map of date → count
   const countMap: Record<string, number> = {}
   for (const c of completions) {
     const key = c.completed_at.split('T')[0]
     countMap[key] = (countMap[key] || 0) + 1
   }
 
-  // Build 52 weeks of dates ending today
   const today = new Date()
   today.setHours(23, 59, 59, 999)
 
   const startDate = new Date(today)
-  startDate.setDate(startDate.getDate() - 52 * 7)
-  startDate.setDate(startDate.getDate() - startDate.getDay()) // Roll to Sunday
+  startDate.setDate(startDate.getDate() - 51 * 7) // 52 weeks total
+  startDate.setDate(startDate.getDate() - startDate.getDay()) // Sunday
 
   const weeks: { date: Date; count: number; key: string }[][] = []
   let currentWeek: { date: Date; count: number; key: string }[] = []
@@ -64,11 +63,11 @@ function getMonthLabels(weeks: { date: Date }[][]) {
 }
 
 const INTENSITY = [
-  'bg-[var(--bg-tertiary)]',              // 0 — empty
-  'bg-emerald-500/20',                   // 1
-  'bg-emerald-500/40',                   // 2
-  'bg-emerald-500/70',                   // 3+
-  'bg-emerald-500',                      // 4+
+  'bg-[var(--bg-tertiary)]',
+  'bg-emerald-500/20',
+  'bg-emerald-500/40',
+  'bg-emerald-500/70',
+  'bg-emerald-500',
 ]
 
 function cellClass(count: number): string {
@@ -84,55 +83,100 @@ const DAY_LABELS = ['', 'Mon', '', 'Wed', '', 'Fri', '']
 export function ActivityHeatmap({ completions }: ActivityHeatmapProps) {
   const weeks = useMemo(() => getWeeksData(completions), [completions])
   const monthLabels = useMemo(() => getMonthLabels(weeks), [weeks])
+  const [viewIndex, setViewIndex] = useState(0) // 0 is most recent weeks
   const total = completions.length
+  
+  // Use a simpler approach for responsiveness without complex hooks
+  // On desktop we show more, on mobile we show less
+  const VISIBLE_WEEKS = 16 
+  const maxIndex = Math.max(0, weeks.length - VISIBLE_WEEKS)
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--text-tertiary)] flex items-center gap-2">
-           <Calendar className="h-3.5 w-3.5" />
-           Activity Pulse
-        </h3>
-        <span className="text-[10px] font-bold text-[var(--text-tertiary)] uppercase">{total} Total</span>
+    <div className="space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+           <div className="p-2 bg-[var(--bg-tertiary)] rounded-[8px] border border-[var(--border)] shadow-sm">
+             <Calendar className="h-4 w-4 text-[var(--accent)]" />
+           </div>
+           <div>
+             <h3 className="text-[11px] font-black uppercase tracking-[0.25em] text-[var(--text-primary)]">
+               Activity Pulse
+             </h3>
+             <p className="text-[9px] font-bold text-[var(--text-tertiary)] uppercase tracking-wider mt-0.5">
+               {total} Total Signal Completions
+             </p>
+           </div>
+        </div>
+        
+        <div className="flex items-center justify-between sm:justify-end gap-4 border-t sm:border-t-0 border-[var(--border)] pt-4 sm:pt-0">
+           <div className="flex gap-1.5">
+             <button 
+               onClick={() => setViewIndex(prev => Math.min(maxIndex, prev + 4))}
+               disabled={viewIndex === maxIndex}
+               className="p-2 hover:bg-[var(--bg-tertiary)] disabled:opacity-30 rounded-[6px] border border-[var(--border)] transition-all active:scale-90"
+               title="Past Activity"
+             >
+               <ChevronLeft className="h-3.5 w-3.5" />
+             </button>
+             <button 
+               onClick={() => setViewIndex(prev => Math.max(0, prev - 4))}
+               disabled={viewIndex === 0}
+               className="p-2 hover:bg-[var(--bg-tertiary)] disabled:opacity-30 rounded-[6px] border border-[var(--border)] transition-all active:scale-90"
+               title="Recent Activity"
+             >
+               <ChevronRight className="h-3.5 w-3.5" />
+             </button>
+           </div>
+        </div>
       </div>
 
-      <div className="relative group">
-        <div className="overflow-x-auto scrollbar-hide select-none">
-          <div className="inline-block min-w-full">
-            
-            {/* Month Labels aligned to grid */}
-            <div className="flex h-4 mb-2 ml-7 relative">
-              {monthLabels.map((m, i) => (
-                <span 
-                  key={i} 
-                  className="text-[9px] font-bold text-[var(--text-tertiary)] absolute uppercase tracking-tighter"
-                  style={{ left: `${m.index * 13}px` }}
-                >
-                  {m.label}
+      <div className="relative overflow-hidden pt-8 pb-4">
+        <div className="overflow-x-hidden select-none">
+          <div className="flex gap-2 sm:gap-3">
+            {/* Y-Axis: Days */}
+            <div className="flex flex-col justify-between h-[84px] w-8 shrink-0 py-1">
+              {DAY_LABELS.map((day, i) => (
+                <span key={i} className="text-[8px] font-black text-[var(--text-tertiary)] uppercase text-right pr-2">
+                  {day}
                 </span>
               ))}
             </div>
 
-            {/* Main Grid */}
-            <div className="flex gap-1">
-              {/* Y-Axis: Days */}
-              <div className="flex flex-col gap-[3px] w-6 shrink-0 pt-[2px]">
-                {DAY_LABELS.map((day, i) => (
-                  <span key={i} className="text-[8px] font-bold text-[var(--text-tertiary)] h-2.5 leading-[10px] uppercase">
-                    {day}
-                  </span>
-                ))}
+            {/* X-Axis: Weeks Grid */}
+            <div className="relative flex-1">
+              {/* Month Labels overlay */}
+              <div className="absolute -top-6 left-0 w-full flex h-4 pointer-events-none">
+                {monthLabels.map((m, i) => {
+                  const xPos = (m.index * 13) - (viewIndex * 13)
+                  // Only show if it's within a visible range (approximate)
+                  if (xPos < -50 || xPos > 500) return null
+                  return (
+                    <span 
+                      key={i} 
+                      className="text-[9px] font-black text-[var(--accent)] absolute uppercase tracking-widest transition-all duration-700 ease-out"
+                      style={{ left: `${xPos}px`, opacity: xPos < 0 ? 0 : 0.6 }}
+                    >
+                      {m.label}
+                    </span>
+                  )
+                })}
               </div>
 
-              {/* X-Axis: Weeks */}
-              <div className="flex gap-[3px]">
+              {/* The Actual Grid */}
+              <div 
+                className="flex gap-1 transition-transform duration-700 cubic-bezier(0.4, 0, 0.2, 1)"
+                style={{ transform: `translateX(-${viewIndex * 13}px)` }}
+              >
                 {weeks.map((week, wi) => (
-                  <div key={wi} className="flex flex-col gap-[3px]">
+                  <div key={wi} className="flex flex-col gap-1 shrink-0">
                     {week.map((day) => (
                       <div
                         key={day.key}
                         title={`${day.key}: ${day.count} completion${day.count !== 1 ? 's' : ''}`}
-                        className={`w-2.5 h-2.5 rounded-[1px] transition-all duration-200 cursor-crosshair border border-black/5 dark:border-white/5 ${cellClass(day.count)} hover:ring-1 hover:ring-[var(--accent)] hover:scale-110 z-10`}
+                        className={cn(
+                          "w-2.5 h-2.5 rounded-[1.5px] transition-all duration-300 cursor-crosshair border border-black/5 dark:border-white/5 hover:ring-2 hover:ring-[var(--accent)] hover:z-10 hover:scale-125 shadow-sm",
+                          cellClass(day.count)
+                        )}
                       />
                     ))}
                   </div>
@@ -141,16 +185,36 @@ export function ActivityHeatmap({ completions }: ActivityHeatmapProps) {
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Tactile Legend */}
-        <div className="flex items-center justify-end gap-1.5 mt-4 opacity-60 group-hover:opacity-100 transition-opacity">
-          <span className="text-[9px] font-bold text-[var(--text-tertiary)] uppercase tracking-tighter">Quiet</span>
-          <div className="flex gap-1">
-            {INTENSITY.map((cls, i) => (
-              <div key={i} className={`w-2 h-2 rounded-[1px] ${cls} border border-black/5 dark:border-white/5`} />
+      {/* Legend & Filter Bar */}
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-6 pt-6 border-t border-[var(--border)]/50">
+        <div className="flex items-center gap-3 w-full sm:w-auto">
+          <span className="text-[9px] font-black text-[var(--text-tertiary)] uppercase tracking-widest">Temporal Filters</span>
+          <div className="flex gap-2">
+            {['2026', '2025'].map(year => (
+              <button 
+                key={year} 
+                className={cn(
+                  "px-4 py-1.5 rounded-full border text-[9px] font-black uppercase tracking-[0.15em] transition-all active:scale-95",
+                  year === '2026' 
+                    ? "bg-[var(--accent)]/10 border-[var(--accent)]/30 text-[var(--accent)]" 
+                    : "border-[var(--border)] text-[var(--text-tertiary)] hover:border-[var(--text-secondary)]"
+                )}
+              >
+                {year}
+              </button>
             ))}
           </div>
-          <span className="text-[9px] font-bold text-[var(--text-tertiary)] uppercase tracking-tighter">Busy</span>
+        </div>
+
+        <div className="flex items-center gap-2.5 bg-[var(--bg-tertiary)]/50 px-4 py-2 rounded-full border border-[var(--border)] shadow-inner">
+          <span className="text-[9px] font-black text-[var(--text-tertiary)] uppercase tracking-widest mr-2">Signal Intensity</span>
+          <div className="flex gap-1.5">
+            {INTENSITY.map((cls, i) => (
+              <div key={i} className={cn("w-2 h-2 rounded-[1.5px] border border-black/10 dark:border-white/10 shadow-sm", cls)} />
+            ))}
+          </div>
         </div>
       </div>
     </div>

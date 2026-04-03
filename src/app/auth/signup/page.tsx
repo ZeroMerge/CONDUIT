@@ -10,6 +10,7 @@ import { Avatar } from '@/components/avatar'
 import { AvatarColorPicker } from '@/components/avatar-color-picker'
 import { sanitizeUsername } from '@/lib/username'
 import { toast } from 'sonner'
+import { Profile } from '@/types'
 import { ResponsiveContainer } from '@/components/ui/responsive-container'
 
 function SignUpContent() {
@@ -130,6 +131,7 @@ function SignUpContent() {
         username: username.toLowerCase(),
         avatar_seed: selectedAvatar,
         avatar_bg_color: selectedColor,
+        full_name: null,
         bio: null,
         created_at: new Date().toISOString(),
         current_streak: 0,
@@ -137,7 +139,7 @@ function SignUpContent() {
         last_completed_date: null,
         total_time_saved_minutes: 0,
         total_xp: 0
-      })
+      } as any as Profile)
 
       toast.success(`Welcome to Conduit, ${username}!`)
       const redirectTo = searchParams.get('redirect') || '/'

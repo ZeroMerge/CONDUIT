@@ -8,6 +8,7 @@ export interface Database {
         Row: {
           id: string
           username: string
+          full_name: string | null
           avatar_seed: string
           bio: string | null
           created_at: string
@@ -18,6 +19,16 @@ export interface Database {
           total_xp: number
           is_admin: boolean
           avatar_bg_color: string | null
+          website_url: string | null
+          twitter_handle: string | null
+          github_handle: string | null
+          location: string | null
+          company: string | null
+          readme_markdown: string | null
+          social_links: Json | null
+          pinned_flow_ids: string[] | null
+          is_verified: boolean
+          trust_score: number
         }
         Insert: {
           id: string
@@ -32,6 +43,16 @@ export interface Database {
           total_xp?: number
           is_admin?: boolean
           avatar_bg_color?: string | null
+          website_url?: string | null
+          twitter_handle?: string | null
+          github_handle?: string | null
+          location?: string | null
+          company?: string | null
+          readme_markdown?: string | null
+          social_links?: Json | null
+          pinned_flow_ids?: string[] | null
+          is_verified?: boolean
+          trust_score?: number
         }
         Update: {
           id?: string
