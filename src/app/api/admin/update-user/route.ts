@@ -28,8 +28,17 @@ export async function POST(request: Request) {
       .eq('id', user.id)
       .maybeSingle()
 
-    if (profileError || !profile?.is_admin) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    if (profileError) {
+      console.error('[Admin] Profile fetch error:', profileError)
+      return NextResponse.json(
+        { error: 'Profile authorization check failed', details: profileError.code }, 
+        { status: 403 }
+      )
+    }
+
+    if (!profile?.is_admin) {
+      console.warn(`[Admin] Unauthorized access attempt by user ${user.id}`)
+      return NextResponse.json({ error: 'Forbidden: Admin access required' }, { status: 403 })
     }
 
     const adminId = user.id
@@ -70,7 +79,13 @@ export async function POST(request: Request) {
   } catch (error: any) {
     console.error('Admin update-user error:', error)
     return NextResponse.json(
-      { error: error.message || 'Server error' }, 
+      { 
+        error: error.message || 'Server error',
+        details: error.code || error.message || undefined,
+        hint: error.message?.includes('admin environment variables') 
+          ? 'Check SUPABASE_SERVICE_ROLE_KEY' 
+          : undefined
+      }, 
       { status: 500 }
     )
   }

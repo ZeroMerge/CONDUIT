@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: ProfilePageProps): Promise<Me
   const { data: profile, error } = await supabase
     .from('profiles')
     .select('username')
-    .eq('username', username)
+    .ilike('username', username)
     .maybeSingle()
 
   if (error || !profile) return { title: 'User Not Found' }
@@ -58,7 +58,8 @@ function getSocialIcon(url: string) {
 }
 
 export default async function ProfilePage({ params }: ProfilePageProps) {
-  const { username } = await params
+  const { username: rawUsername } = await params
+  const username = rawUsername.toLowerCase().trim()
   const supabase = await createClient()
   
   // High-resilience query: only select basic columns first, then expand
@@ -80,15 +81,28 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
         flow_id
       )
     `)
-    .eq('username', username)
+    .ilike('username', username)
     .maybeSingle()
 
   if (error) {
-    console.error(`[Profile] Query error for ${username}:`, error)
+    console.error(`[Profile] Query error for ${username}:`, {
+      code: error.code,
+      message: error.message,
+      details: error.details,
+      hint: error.hint
+    })
   }
 
-  if (!profile) {
-    console.log(`[Profile] User ${username} not found or query failed.`)
+  if (profile) {
+    console.log(`[Profile] Fetched identity for @${username}:`, {
+      id: profile.id,
+      is_verified: profile.is_verified,
+      trust_score: profile.trust_score,
+      flows_count: profile.flows?.length,
+      completions_count: profile.completions?.length
+    })
+  } else {
+    console.warn(`[Profile] No identity record found for @${username}. Redirecting to 404.`)
     notFound()
   }
 
@@ -162,7 +176,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
                    size={300} 
                    bg_color={p.avatar_bg_color} 
                    verified={p.is_verified}
-                   className="w-[72px] h-[72px] sm:w-[100px] sm:h-[100px] lg:w-[280px] lg:h-[280px] xl:w-[300px] xl:h-[300px] rounded-[6px] border-[1.5px] border-[var(--border)] shadow-2xl transition-all duration-700 group-hover/avatar:scale-[1.02] bg-[var(--bg-secondary)]" 
+                   className="w-[72px] h-[72px] sm:w-[100px] sm:h-[100px] lg:w-[280px] lg:h-[280px] xl:w-[300px] xl:h-[300px] rounded-full border-[1.5px] border-[var(--border)] shadow-2xl transition-all duration-700 group-hover/avatar:scale-[1.02] bg-[var(--bg-secondary)]" 
                 />
               </div>
 

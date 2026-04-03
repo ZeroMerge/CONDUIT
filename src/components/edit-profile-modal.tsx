@@ -218,8 +218,8 @@ export function EditProfileModal({ profile, onClose }: EditProfileModalProps) {
             <div className="md:col-span-4 lg:col-span-3 space-y-8 h-fit">
                <div className="flex flex-col items-center gap-6">
                 <div className="relative group/identity shrink-0">
-                  <div className="absolute inset-0 bg-[var(--accent)] opacity-10 rounded-[12px] blur-2xl group-hover/identity:opacity-20 transition-opacity" />
-                  <Avatar seed={seed} size={200} bg_color={bgColor} className="w-[120px] h-[120px] sm:w-[160px] sm:h-[160px] rounded-[12px] border-[2px] border-[var(--border)] shadow-2xl relative z-10 transition-transform duration-500 group-hover/identity:scale-[1.02]" />
+                  <div className="absolute inset-0 bg-[var(--accent)] opacity-10 rounded-full blur-2xl group-hover/identity:opacity-20 transition-opacity" />
+                  <Avatar seed={seed} size={200} bg_color={bgColor} className="w-[120px] h-[120px] sm:w-[160px] sm:h-[160px] rounded-full border-[2px] border-[var(--border)] shadow-2xl relative z-10 transition-transform duration-500 group-hover/identity:scale-[1.02]" />
                   <button
                     type="button"
                     onClick={handleShuffle}
