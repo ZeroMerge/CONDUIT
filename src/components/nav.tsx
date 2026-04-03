@@ -91,7 +91,7 @@ export function Nav() {
           TOP NAV BAR
       ══════════════════════════════════════════════════════ */}
       <nav
-        className="sticky top-0 z-50 border-b border-[var(--border)] bg-[var(--bg-primary)]/90 glass"
+        className="sticky top-0 z-50 border-b border-[var(--border)] bg-[var(--bg-primary)]/70 backdrop-blur-xl backdrop-saturate-150 shadow-sm shadow-black/[0.02]"
         style={{ height: 'var(--nav-height)' }}
       >
         <div className="page-container flex items-center justify-between h-full gap-4">
