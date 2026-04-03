@@ -37,11 +37,15 @@ export function EditProfileModal({ profile, onClose }: EditProfileModalProps) {
   const [readme, setReadme] = useState(profile.readme_markdown || '')
   
   // Dynamic Socials
-  const [socials, setSocials] = useState<{ platform: string; url: string }[]>(profile.social_links || [])
+  const [socials, setSocials] = useState<{ platform: string; url: string }[]>(
+    Array.isArray(profile.social_links) ? profile.social_links : []
+  )
   const [newSocialUrl, setNewSocialUrl] = useState('')
 
   // Pinned Flows
-  const [pinnedIds, setPinnedIds] = useState<string[]>(profile.pinned_flow_ids || [])
+  const [pinnedIds, setPinnedIds] = useState<string[]>(
+    Array.isArray(profile.pinned_flow_ids) ? profile.pinned_flow_ids : []
+  )
   const [userFlows, setUserFlows] = useState<Flow[]>([])
   const [searchQuery, setSearchQuery] = useState('')
   const [fetchingFlows, setFetchingFlows] = useState(false)
@@ -165,10 +169,10 @@ export function EditProfileModal({ profile, onClose }: EditProfileModalProps) {
   )
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 overflow-hidden selection:bg-[var(--accent)]/30">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 md:p-10 overflow-hidden selection:bg-[var(--accent)]/30">
       {/* Backdrop with theme-aware blur */}
       <div 
-        className="absolute inset-0 bg-white/40 dark:bg-black/60 backdrop-blur-xl animate-backdrop"
+        className="absolute inset-0 bg-white/40 dark:bg-black/60 backdrop-blur-xl transition-all duration-500 animate-in fade-in"
         onClick={onClose}
       />
 
@@ -523,7 +527,6 @@ export function EditProfileModal({ profile, onClose }: EditProfileModalProps) {
           <button
             type="submit"
             disabled={loading}
-            onClick={handleSave}
             className="flex-1 max-w-lg flex items-center justify-center gap-2 bg-[var(--accent)] hover:bg-[var(--accent-hover)] disabled:opacity-50 text-white font-bold py-3.5 px-6 rounded-xl transition-all shadow-lg shadow-[var(--accent)]/20 active:scale-[0.98]"
           >
             {loading ? (
