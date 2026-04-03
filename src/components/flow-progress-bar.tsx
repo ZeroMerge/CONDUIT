@@ -13,28 +13,65 @@ export function FlowProgressBar({
   totalSteps,
   estimatedMinutes,
 }: FlowProgressBarProps) {
-  const progress = ((currentStep + 1) / totalSteps) * 100
-  const remainingMinutes = Math.round(
-    (estimatedMinutes * (totalSteps - currentStep - 1)) / totalSteps
-  )
+  const progress         = ((currentStep + 1) / totalSteps) * 100
+  const remainingMinutes = Math.round((estimatedMinutes * (totalSteps - currentStep - 1)) / totalSteps)
+  const MAX_DOTS         = 14 // max dots before we show "+N"
 
   return (
-    <div className="sticky top-14 z-40 bg-[var(--bg-primary)] border-b border-[var(--border)] py-3">
-      <div className="max-w-[720px] mx-auto px-6">
-        <div className="flex items-center justify-between text-sm mb-2">
-          <span className="text-[var(--text-primary)] truncate max-w-[200px] sm:max-w-[300px]">
+    <div className="sticky z-[30] bg-[var(--bg-primary)]/95 border-b border-[var(--border)] glass" style={{ top: 'var(--nav-height)' }}>
+
+      {/* Thin accent progress line — always visible */}
+      <div className="h-0.5 w-full bg-[var(--bg-tertiary)]">
+        <div
+          className="h-full bg-[var(--accent)] transition-all duration-500 ease-out"
+          style={{ width: `${progress}%` }}
+        />
+      </div>
+
+      {/* Progress details row */}
+      <div className="page-container max-w-[720px] py-2.5 flex items-center justify-between gap-3">
+
+        {/* Left: flow title (hidden on very small screens) + est. time */}
+        <div className="flex-1 min-w-0 hidden xs:block">
+          <p className="text-xs font-medium text-[var(--text-primary)] truncate leading-tight">
             {flowTitle}
-          </span>
-          <span className="text-[var(--text-secondary)]">
-            Step {currentStep + 1} of {totalSteps}
-            {remainingMinutes > 0 && ` &middot; ~${remainingMinutes} min remaining`}
-          </span>
+          </p>
+          {remainingMinutes > 0 && (
+            <p className="text-[10px] text-[var(--text-tertiary)] mt-0.5">
+              ~{remainingMinutes} min left
+            </p>
+          )}
         </div>
-        <div className="h-0.5 w-full bg-[var(--border)]">
-          <div
-            className="h-full bg-[var(--accent)] transition-all duration-300"
-            style={{ width: `${progress}%` }}
-          />
+
+        {/* Centre: dot indicators */}
+        <div className="flex items-center gap-[5px] flex-shrink-0 mx-auto xs:mx-0">
+          {Array.from({ length: Math.min(totalSteps, MAX_DOTS) }).map((_, i) => {
+            const done    = i < currentStep
+            const current = i === currentStep
+            return (
+              <span
+                key={i}
+                className={`
+                  rounded-full transition-all duration-300
+                  ${done    ? 'w-[7px] h-[7px] bg-[var(--accent)]' : ''}
+                  ${current ? 'w-[10px] h-[10px] bg-[var(--accent)] ring-2 ring-[var(--accent)]/30' : ''}
+                  ${!done && !current ? 'w-[6px] h-[6px] bg-[var(--bg-tertiary)]' : ''}
+                `}
+              />
+            )
+          })}
+          {totalSteps > MAX_DOTS && (
+            <span className="text-[10px] text-[var(--text-tertiary)] ml-1 font-medium">
+              +{totalSteps - MAX_DOTS}
+            </span>
+          )}
+        </div>
+
+        {/* Right: step counter */}
+        <div className="flex items-center gap-1 flex-shrink-0 text-xs">
+          <span className="font-bold text-[var(--text-primary)]">{currentStep + 1}</span>
+          <span className="text-[var(--text-tertiary)]">/</span>
+          <span className="text-[var(--text-tertiary)]">{totalSteps}</span>
         </div>
       </div>
     </div>

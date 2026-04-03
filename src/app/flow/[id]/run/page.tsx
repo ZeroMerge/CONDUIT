@@ -7,7 +7,9 @@ import { useUserStore } from '@/lib/stores/user'
 import { useExecutionStore } from '@/lib/stores/execution'
 import { FlowProgressBar } from '@/components/flow-progress-bar'
 import { StepView } from '@/components/step-view'
+import { StickyBottomBar } from '@/components/ui/sticky-bottom-bar'
 import { toast } from 'sonner'
+import { ChevronLeft, ChevronRight, Check } from 'lucide-react'
 import type { Flow, Step } from '@/types'
 
 export default function RunFlowPage() {
@@ -27,34 +29,21 @@ export default function RunFlowPage() {
     setRunCounted,
   } = useExecutionStore()
 
-  const [flow, setFlow] = useState<Flow | null>(null)
-  const [steps, setSteps] = useState<Step[]>([])
+  const [flow, setFlow]       = useState<Flow | null>(null)
+  const [steps, setSteps]     = useState<Step[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const fetchFlow = async () => {
       try {
-        // Fetch flow
-        const { data: flowData, error: flowError } = await supabase
-          .from('flows')
-          .select('*')
-          .eq('id', flowId)
-          .single()
-
+        const { data: flowData, error: flowError } = await supabase.from('flows').select('*').eq('id', flowId).single()
         if (flowError) throw flowError
         setFlow(flowData)
 
-        // Fetch steps
-        const { data: stepsData, error: stepsError } = await supabase
-          .from('steps')
-          .select('*')
-          .eq('flow_id', flowId)
-          .order('order_index', { ascending: true })
-
+        const { data: stepsData, error: stepsError } = await supabase.from('steps').select('*').eq('flow_id', flowId).order('order_index', { ascending: true })
         if (stepsError) throw stepsError
         setSteps(stepsData || [])
 
-        // Initialize execution store
         if (storedFlowId !== flowId) {
           setFlowId(flowId)
           setCurrentStep(0)
@@ -66,19 +55,14 @@ export default function RunFlowPage() {
         setLoading(false)
       }
     }
-
     fetchFlow()
   }, [flowId, storedFlowId, setFlowId, setCurrentStep])
 
   useEffect(() => {
-    // Record step start for analytics
     const recordStart = async () => {
       if (steps.length > 0 && steps[currentStepIndex]) {
-        try {
-          await supabase.rpc('increment_step_start', { target_step_id: steps[currentStepIndex].id })
-        } catch (error) {
-          console.error(error)
-        }
+        try { await supabase.rpc('increment_step_start', { target_step_id: steps[currentStepIndex].id }) }
+        catch (error) { console.error(error) }
       }
     }
     recordStart()
@@ -86,27 +70,18 @@ export default function RunFlowPage() {
 
   const handleStepComplete = async () => {
     markStepComplete(currentStepIndex)
-
-    // Increment run count on first step completion if user is signed in
     if (user && currentStepIndex === 0 && !runCounted) {
-      try {
-        await supabase.rpc('increment_run_count', { flow_id: flowId })
-        setRunCounted(true)
-      } catch (error) {
-        console.error('Error incrementing run count:', error)
-      }
+      try { await supabase.rpc('increment_run_count', { flow_id: flowId }); setRunCounted(true) }
+      catch (error) { console.error(error) }
     }
-
     if (steps[currentStepIndex]) {
-      try {
-        await supabase.rpc('increment_step_complete', { target_step_id: steps[currentStepIndex].id })
-      } catch (error) {
-        console.error(error)
-      }
+      try { await supabase.rpc('increment_step_complete', { target_step_id: steps[currentStepIndex].id }) }
+      catch (error) { console.error(error) }
     }
-
     if (currentStepIndex < steps.length - 1) {
       setCurrentStep(currentStepIndex + 1)
+      // Scroll to top so user sees new step from beginning
+      window.scrollTo({ top: 0, behavior: 'smooth' })
     } else {
       router.push(`/flow/${flowId}/complete`)
     }
@@ -116,6 +91,7 @@ export default function RunFlowPage() {
     skipStep(currentStepIndex)
     if (currentStepIndex < steps.length - 1) {
       setCurrentStep(currentStepIndex + 1)
+      window.scrollTo({ top: 0, behavior: 'smooth' })
     } else {
       router.push(`/flow/${flowId}/complete`)
     }
@@ -124,16 +100,18 @@ export default function RunFlowPage() {
   const handlePreviousStep = () => {
     if (currentStepIndex > 0) {
       setCurrentStep(currentStepIndex - 1)
+      window.scrollTo({ top: 0, behavior: 'smooth' })
     }
   }
 
   if (loading) {
     return (
-      <div className="max-w-[720px] mx-auto px-6 py-12">
+      <div className="page-container max-w-[720px] py-12">
         <div className="animate-pulse space-y-8">
-          <div className="h-4 bg-[var(--bg-tertiary)] rounded w-1/4" />
-          <div className="h-8 bg-[var(--bg-tertiary)] rounded w-3/4" />
-          <div className="h-32 bg-[var(--bg-tertiary)] rounded" />
+          <div className="skeleton h-4 w-1/4 rounded" />
+          <div className="skeleton h-8 w-3/4 rounded" />
+          <div className="skeleton h-32 rounded" />
+          <div className="skeleton h-24 rounded" />
         </div>
       </div>
     )
@@ -141,7 +119,7 @@ export default function RunFlowPage() {
 
   if (!flow || steps.length === 0) {
     return (
-      <div className="max-w-[720px] mx-auto px-6 py-12 text-center">
+      <div className="page-container max-w-[720px] py-12 text-center">
         <p className="text-[var(--text-tertiary)]">Flow not found</p>
       </div>
     )
@@ -151,6 +129,7 @@ export default function RunFlowPage() {
 
   return (
     <div>
+      {/* Progress bar — sticky below nav */}
       <FlowProgressBar
         flowTitle={flow.title}
         currentStep={currentStepIndex}
@@ -158,41 +137,92 @@ export default function RunFlowPage() {
         estimatedMinutes={flow.estimated_minutes}
       />
 
-      <div className="max-w-[720px] mx-auto px-6 py-12">
+      {/* Page content */}
+      <div className="page-container max-w-[720px] py-8 md:py-12">
         <StepView
           step={currentStep}
           stepIndex={currentStepIndex}
           totalSteps={steps.length}
         />
 
-        <div className="border-t border-[var(--border)] my-8" />
+        {/* ── Desktop navigation controls (hidden on mobile — see StickyBottomBar) ── */}
+        <div className="hidden md:block">
+          <div className="border-t border-[var(--border)] my-8" />
 
+          <button
+            onClick={handleStepComplete}
+            className="
+              w-full flex items-center justify-center gap-2
+              bg-[var(--accent)] hover:bg-[var(--accent-hover)]
+              text-white font-semibold text-base
+              py-4 rounded-xl
+              transition-colors press-scale
+              shadow-lg shadow-[var(--accent)]/20
+            "
+          >
+            <Check className="h-5 w-5" />
+            {currentStepIndex < steps.length - 1 ? "I'm done — next step" : "Complete this flow"}
+          </button>
+
+          <div className="flex items-center justify-between mt-4">
+            {currentStepIndex > 0 ? (
+              <button onClick={handlePreviousStep} className="flex items-center gap-1.5 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
+                <ChevronLeft className="h-4 w-4" /> Previous step
+              </button>
+            ) : <div />}
+            <button onClick={handleSkipStep} className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
+              Skip this step →
+            </button>
+          </div>
+        </div>
+
+        {/* ── Spacer so content isn't hidden behind the mobile bottom bar ── */}
+        <div className="h-28 md:hidden" aria-hidden="true" />
+      </div>
+
+      {/* ══════════════════════════════════════════════════════
+          MOBILE STICKY BOTTOM ACTION BAR
+          Always reachable regardless of scroll position.
+          Hidden on md+ (those use the inline controls above).
+      ══════════════════════════════════════════════════════ */}
+      <StickyBottomBar>
+        {/* Primary CTA */}
         <button
           onClick={handleStepComplete}
-          className="w-full bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-base font-medium py-3 rounded transition-colors duration-150"
+          className="
+            w-full flex items-center justify-center gap-2
+            bg-[var(--accent)] hover:bg-[var(--accent-hover)]
+            text-white font-semibold text-base
+            py-3.5 rounded-xl
+            transition-colors press-scale
+            shadow-lg shadow-[var(--accent)]/20
+          "
         >
-          ✓ I&apos;m done with this step
+          <Check className="h-5 w-5" />
+          {currentStepIndex < steps.length - 1 ? "Done — next step" : "Complete flow"}
         </button>
 
-        <div className="flex items-center justify-between mt-6">
+        {/* Secondary controls */}
+        <div className="flex items-center justify-between mt-2 pb-1">
           {currentStepIndex > 0 ? (
             <button
               onClick={handlePreviousStep}
-              className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors duration-150"
+              className="touch-target flex items-center gap-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors pr-2"
             >
-              &larr; Previous step
+              <ChevronLeft className="h-4 w-4" />
+              <span>Previous</span>
             </button>
-          ) : (
-            <div />
-          )}
+          ) : <div className="touch-target" />}
+
           <button
             onClick={handleSkipStep}
-            className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors duration-150"
+            className="touch-target flex items-center gap-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors pl-2"
           >
-            Skip this step &rarr;
+            <span>Skip</span>
+            <ChevronRight className="h-4 w-4" />
           </button>
         </div>
-      </div>
+      </StickyBottomBar>
     </div>
   )
 }

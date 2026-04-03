@@ -1,56 +1,57 @@
 "use client"
 
-import { useState, useEffect } from 'react'
-import Link from 'next/link'
-import { supabase } from '@/lib/supabase/client'
+import { useRouter } from 'next/navigation'
 
-interface CategoryFilterProps {
-  activeCategory?: string
-}
+const CATEGORIES = [
+  'All',
+  'Marketing',
+  'Sales',
+  'Engineering',
+  'Product',
+  'Operations',
+  'Design',
+  'Personal'
+]
 
-export function CategoryFilter({ activeCategory = 'all' }: CategoryFilterProps) {
-  const [categories, setCategories] = useState<{ value: string; label: string }[]>([
-    { value: 'all', label: 'All' },
-  ])
+export function CategoryFilter({ activeCategory = 'All' }: { activeCategory?: string }) {
+  const router = useRouter()
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      // Fetch unique categories from the flows table
-      const { data, error } = await supabase
-        .from('flows')
-        .select('category')
-        .neq('category', '')
-      
-      if (!error && data) {
-        const uniqueCategories = Array.from(new Set(data.map(d => d.category)))
-          .filter(Boolean)
-          .sort()
-
-        setCategories([
-          { value: 'all', label: 'All' },
-          ...uniqueCategories.map(cat => ({ value: cat, label: cat }))
-        ])
-      }
+  const handleCategoryClick = (category: string) => {
+    const url = new URL(window.location.href)
+    if (category.toLowerCase() === 'all') {
+      url.searchParams.delete('category')
+    } else {
+      url.searchParams.set('category', category.toLowerCase())
     }
-
-    fetchCategories()
-  }, [])
+    router.push(url.pathname + url.search)
+  }
 
   return (
-    <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide no-scrollbar">
-      {categories.map((category) => (
-        <Link
-          key={category.value}
-          href={category.value === 'all' ? '/explore' : `/explore?category=${category.value}`}
-          className={`flex-shrink-0 text-xs font-bold uppercase tracking-wider px-4 py-2 rounded-full border transition-all duration-200 ${
-            activeCategory === category.value
-              ? 'bg-[var(--accent)] text-white border-[var(--accent)] shadow-lg shadow-[var(--accent-subtle)]'
-              : 'bg-[var(--bg-secondary)] text-[var(--text-tertiary)] border-[var(--border)] hover:border-[var(--border-strong)] hover:text-[var(--text-primary)]'
-          }`}
-        >
-          {category.label}
-        </Link>
-      ))}
+    <div className="relative -mx-4 px-4 sm:mx-0 sm:px-0 scroll-fade-both sm:mask-image-none">
+      <div className="flex gap-2.5 overflow-x-auto snap-x scrollbar-hide py-1 pb-2">
+        {CATEGORIES.map((category) => {
+          const isActive = 
+            category.toLowerCase() === activeCategory.toLowerCase() || 
+            (activeCategory === 'all' && category === 'All')
+
+          return (
+            <button
+              key={category}
+              onClick={() => handleCategoryClick(category)}
+              className={`
+                snap-child flex-shrink-0
+                px-4 py-2 rounded-xl text-sm font-semibold whitespace-nowrap transition-all duration-200 press-scale
+                ${isActive 
+                  ? 'bg-[var(--text-primary)] text-[var(--bg-primary)] shadow-md' 
+                  : 'bg-[var(--bg-secondary)] border border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--border-strong)] hover:text-[var(--text-primary)]'
+                }
+              `}
+            >
+              {category}
+            </button>
+          )
+        })}
+      </div>
     </div>
   )
 }

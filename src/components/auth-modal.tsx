@@ -1,8 +1,7 @@
 "use client"
 
-import { useEffect, useCallback } from 'react'
 import Link from 'next/link'
-import { X } from 'lucide-react'
+import { BottomSheet } from '@/components/ui/bottom-sheet'
 
 interface AuthModalProps {
   isOpen: boolean
@@ -18,120 +17,35 @@ const subtitles: Record<AuthModalProps['trigger'], string> = {
 }
 
 export function AuthModal({ isOpen, onClose, trigger }: AuthModalProps) {
-  const handleEscape = useCallback((e: KeyboardEvent) => {
-    if (e.key === 'Escape') {
-      onClose()
-    }
-  }, [onClose])
-
-  useEffect(() => {
-    if (isOpen) {
-      document.addEventListener('keydown', handleEscape)
-    }
-    return () => {
-      document.removeEventListener('keydown', handleEscape)
-    }
-  }, [isOpen, handleEscape])
-
-  if (!isOpen) return null
-
   return (
-    <>
-      {/* Desktop overlay */}
-      <div
-        className="fixed inset-0 bg-black/40 z-50 hidden sm:block"
-        onClick={onClose}
-      />
+    <BottomSheet isOpen={isOpen} onClose={onClose} title="Sign in to continue" maxWidth="max-w-sm">
+      <p className="text-sm text-[var(--text-secondary)] mb-6">
+        {subtitles[trigger]}
+      </p>
 
-      {/* Desktop modal */}
-      <div className="fixed inset-0 z-50 hidden sm:flex items-center justify-center p-4 pointer-events-none">
-        <div className="bg-[var(--bg-primary)] border border-[var(--border)] rounded p-6 max-w-[400px] w-full pointer-events-auto">
-          <div className="flex items-start justify-between mb-4">
-            <h2 className="text-lg font-geist font-semibold text-[var(--text-primary)]">
-              Sign in to continue
-            </h2>
-            <button
-              onClick={onClose}
-              className="text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] transition-colors duration-150"
-            >
-              <X className="h-5 w-5" />
-            </button>
-          </div>
-
-          <p className="text-sm text-[var(--text-secondary)] mb-6">
-            {subtitles[trigger]}
-          </p>
-
-          <div className="flex flex-col gap-3">
-            <Link
-              href="/auth/signup"
-              className="bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-sm font-medium px-4 py-2 rounded text-center transition-colors duration-150"
-            >
-              Create account
-            </Link>
-            <Link
-              href="/auth/signin"
-              className="bg-transparent border border-[var(--border)] hover:border-[var(--border-strong)] text-[var(--text-primary)] text-sm font-medium px-4 py-2 rounded text-center transition-colors duration-150"
-            >
-              Sign in
-            </Link>
-          </div>
-
-          <button
-            onClick={onClose}
-            className="mt-4 text-sm text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] transition-colors duration-150 block w-full text-center"
-          >
-            Continue without account &rarr;
-          </button>
-        </div>
+      <div className="flex flex-col gap-3">
+        <Link
+          href="/auth/signup"
+          onClick={onClose}
+          className="bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-sm font-semibold px-4 py-3 rounded-xl text-center transition-colors shadow-lg shadow-[var(--accent)]/20 press-scale"
+        >
+          Create account
+        </Link>
+        <Link
+          href="/auth/signin"
+          onClick={onClose}
+          className="bg-transparent border border-[var(--border)] hover:bg-[var(--bg-secondary)] text-[var(--text-primary)] text-sm font-semibold px-4 py-3 rounded-xl text-center transition-colors press-scale"
+        >
+          Sign in
+        </Link>
       </div>
 
-      {/* Mobile bottom sheet */}
-      <div
-        className="fixed inset-0 bg-black/40 z-50 sm:hidden"
+      <button
         onClick={onClose}
-      />
-      <div className="fixed bottom-0 left-0 right-0 z-50 sm:hidden">
-        <div className="bg-[var(--bg-primary)] border border-[var(--border)] border-b-0 rounded-t p-6">
-          <div className="flex items-start justify-between mb-4">
-            <h2 className="text-lg font-geist font-semibold text-[var(--text-primary)]">
-              Sign in to continue
-            </h2>
-            <button
-              onClick={onClose}
-              className="text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] transition-colors duration-150"
-            >
-              <X className="h-5 w-5" />
-            </button>
-          </div>
-
-          <p className="text-sm text-[var(--text-secondary)] mb-6">
-            {subtitles[trigger]}
-          </p>
-
-          <div className="flex flex-col gap-3">
-            <Link
-              href="/auth/signup"
-              className="bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-sm font-medium px-4 py-2 rounded text-center transition-colors duration-150"
-            >
-              Create account
-            </Link>
-            <Link
-              href="/auth/signin"
-              className="bg-transparent border border-[var(--border)] hover:border-[var(--border-strong)] text-[var(--text-primary)] text-sm font-medium px-4 py-2 rounded text-center transition-colors duration-150"
-            >
-              Sign in
-            </Link>
-          </div>
-
-          <button
-            onClick={onClose}
-            className="mt-4 text-sm text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] transition-colors duration-150 block w-full text-center"
-          >
-            Continue without account &rarr;
-          </button>
-        </div>
-      </div>
-    </>
+        className="mt-4 pb-2 text-sm font-medium text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] transition-colors block w-full text-center"
+      >
+        Continue without account &rarr;
+      </button>
+    </BottomSheet>
   )
 }
