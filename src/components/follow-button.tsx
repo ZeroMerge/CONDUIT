@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/client'
 import { Award, ShieldCheck, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
+import { cn } from '@/lib/utils'
 
 interface FollowButtonProps {
   targetUserId: string
@@ -107,28 +108,29 @@ export function FollowButton({ targetUserId, initialIsFollowing = false, classNa
     <button
       onClick={handleToggle}
       disabled={loading}
-      className={`
-        inline-flex items-center justify-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest transition-all
-        ${isFollowing 
-          ? 'bg-[var(--bg-secondary)] border border-[var(--border)] text-[var(--text-secondary)] hover:bg-red-500/10 hover:text-red-500 hover:border-red-500/20' 
-          : 'bg-[var(--accent)] text-white hover:bg-[var(--accent-hover)] shadow-lg shadow-[var(--accent)]/20'
-        }
-        ${loading ? 'opacity-70 cursor-not-allowed' : 'press-scale'}
-        ${className}
-      `}
+      className={cn(
+        "inline-flex items-center justify-center transition-all disabled:opacity-70 disabled:cursor-not-allowed press-scale",
+        "px-3 sm:px-5 py-1.5 sm:py-2 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-[0.1em] sm:tracking-widest",
+        isFollowing 
+          ? 'bg-[var(--bg-secondary)] border border-[var(--border)] text-[var(--text-secondary)] hover:bg-rose-500/5 hover:text-rose-500 hover:border-rose-500/20 shadow-sm' 
+          : 'bg-[var(--accent)] text-white hover:bg-[var(--accent-hover)] shadow-lg shadow-[var(--accent)]/15 border border-[var(--accent-hover)]/20',
+        className
+      )}
     >
       {loading ? (
-        <Loader2 className="h-3 w-3 animate-spin" />
+        <Loader2 className="h-3.5 w-3.5 animate-spin" />
       ) : isFollowing ? (
-        <>
-          <ShieldCheck className="h-3.5 w-3.5 text-emerald-500 fill-emerald-500/10" />
-          Respected
-        </>
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <ShieldCheck className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[var(--accent)] fill-[var(--accent)]/10" />
+          <span className="hidden xs:inline">Respected</span>
+          <span className="xs:hidden">Hnr</span>
+        </div>
       ) : (
-        <>
-          <Award className="h-3.5 w-3.5" />
-          Respect
-        </>
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <Award className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+          <span className="hidden xs:inline">Respect</span>
+          <span className="xs:hidden">Rspct</span>
+        </div>
       )}
     </button>
   )

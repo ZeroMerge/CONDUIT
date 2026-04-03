@@ -8,7 +8,8 @@ import {
   ExternalLink, Mail, Share2, Info,
   Flame, BarChart3, Database, Workflow,
   Building2, Users, Zap, Link as LinkIcon, ShieldCheck,
-  Youtube, Linkedin, Instagram, AtSign
+  Youtube, Linkedin, Instagram, AtSign,
+  CheckCircle2, XCircle
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { Avatar } from '@/components/avatar'
@@ -328,15 +329,22 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
             {/* Achievements Showcase (Compact) */}
             <div className="space-y-3 py-2">
               <h4 className="text-[9px] font-black text-[var(--text-tertiary)] uppercase tracking-[0.2em] opacity-60">Status Medals</h4>
-              <div className="flex flex-wrap gap-2.5">
-                 <div className="w-10 h-10 rounded-full border border-[var(--border)] flex items-center justify-center relative group/badge shadow-sm hover:scale-105 transition-all text-sm" title="Early Bird">
-                    👋
+              <div className="flex flex-wrap gap-3">
+                 {/* Early Bird Medal */}
+                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-500/20 to-amber-600/5 border border-amber-500/20 flex items-center justify-center relative group/badge shadow-[inset_0_-1px_2px_rgba(0,0,0,0.2),inset_0_1px_2px_rgba(255,255,255,0.1),0_4px_12px_rgba(217,119,6,0.15)] hover:scale-110 hover:-translate-y-0.5 transition-all duration-500" title="Early Bird // Wave Signal">
+                    <div className="absolute inset-0 rounded-full bg-amber-500/10 blur-[8px] group-hover/badge:blur-[12px] opacity-0 group-hover/badge:opacity-100 transition-all" />
+                    <Flame className="h-4 w-4 text-amber-500 drop-shadow-[0_2px_4px_rgba(217,119,6,0.4)] relative z-10" strokeWidth={2.5} />
                  </div>
-                 <div className="w-10 h-10 rounded-full border border-[var(--border)] flex items-center justify-center relative group/badge shadow-sm hover:scale-105 transition-all text-sm" title="System Lead">
-                    ⚡
+
+                 {/* System Lead Medal */}
+                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500/20 to-emerald-600/5 border border-emerald-500/20 flex items-center justify-center relative group/badge shadow-[inset_0_-1px_2px_rgba(0,0,0,0.2),inset_0_1px_2px_rgba(255,255,255,0.1),0_4px_12px_rgba(16,185,129,0.15)] hover:scale-110 hover:-translate-y-0.5 transition-all duration-500" title="System Lead // High Voltage">
+                    <div className="absolute inset-0 rounded-full bg-emerald-500/10 blur-[8px] group-hover/badge:blur-[12px] opacity-0 group-hover/badge:opacity-100 transition-all" />
+                    <Zap className="h-4 w-4 text-emerald-500 drop-shadow-[0_2px_4px_rgba(16,185,129,0.4)] relative z-10 fill-emerald-500/20" strokeWidth={2.5} />
                  </div>
-                 <div className="w-10 h-10 rounded-full border border-dashed border-[var(--border)] flex items-center justify-center group/badge opacity-40 hover:opacity-80 transition-all">
-                    <Trophy className="h-3 w-3 text-[var(--text-tertiary)]" />
+
+                 {/* Architect Medal (Locked/Ghost) */}
+                 <div className="w-10 h-10 rounded-full border border-dashed border-[var(--border)] flex items-center justify-center group/badge opacity-30 hover:opacity-80 transition-all hover:scale-105" title="Epic Architect // Pending Progression">
+                    <Trophy className="h-3.5 w-3.5 text-[var(--text-tertiary)]" />
                  </div>
               </div>
             </div>

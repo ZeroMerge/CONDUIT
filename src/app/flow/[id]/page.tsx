@@ -9,7 +9,7 @@ import { ForkButton } from '@/components/fork-button'
 import { CommentsSection } from '@/components/comments'
 import { SubmitPrButton } from '@/components/submit-pr-button'
 import { MergeRequestsSection } from '@/components/merge-requests-section'
-import { GitFork, ChevronRight, Activity, ArrowRight, ArrowDownToLine } from 'lucide-react'
+import { GitFork, ChevronRight, Activity, ArrowRight, ArrowDownToLine, ArrowLeft } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import { FlowLineage } from '@/components/flow-lineage'
 import { StickyBottomBar, StickyBottomBarSpacer } from '@/components/ui/sticky-bottom-bar'
@@ -85,7 +85,7 @@ export default async function FlowPage({ params }: { params: Promise<{ id: strin
         {/* ── Left Column ── */}
         <div>
           <Link href="/explore" className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors mb-6 touch-target -ml-2 px-2">
-            <span className="text-lg leading-none">&larr;</span> Explore
+            <ArrowLeft className="h-4 w-4" /> Explore
           </Link>
 
           <div className="flex flex-wrap items-center gap-3">

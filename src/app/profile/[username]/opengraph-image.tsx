@@ -42,8 +42,9 @@ export default async function Image({ params }: { params: { username: string } }
 
         {/* Verified Status Badge */}
         {profile.is_verified && (
-            <div style={{ position: 'absolute', top: 40, right: 40, border: '1px solid #10b981', color: '#10b981', padding: '10px 24px', borderRadius: '100px', fontSize: '24px', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span>✓ Verified Authority</span>
+            <div style={{ position: 'absolute', top: 40, right: 40, border: '1px solid #10b981', background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', padding: '10px 24px', borderRadius: '100px', fontSize: '20px', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span>VERIFIED AUTHORITY</span>
             </div>
         )}
 

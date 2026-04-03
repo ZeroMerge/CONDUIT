@@ -134,9 +134,9 @@ export function ActivityHeatmap({ completions }: ActivityHeatmapProps) {
         <div className="overflow-x-hidden select-none">
           <div className="flex gap-2 sm:gap-3">
             {/* Y-Axis: Days */}
-            <div className="flex flex-col justify-between h-[84px] w-8 shrink-0 py-1">
+            <div className="flex flex-col gap-1 w-8 shrink-0 py-[1.5px]">
               {DAY_LABELS.map((day, i) => (
-                <span key={i} className="text-[8px] font-black text-[var(--text-tertiary)] uppercase text-right pr-2">
+                <span key={i} className="h-2.5 flex items-center justify-end pr-2 text-[8px] font-black text-[var(--text-tertiary)] uppercase tracking-tighter">
                   {day}
                 </span>
               ))}
@@ -145,16 +145,20 @@ export function ActivityHeatmap({ completions }: ActivityHeatmapProps) {
             {/* X-Axis: Weeks Grid */}
             <div className="relative flex-1">
               {/* Month Labels overlay */}
-              <div className="absolute -top-6 left-0 w-full flex h-4 pointer-events-none">
+              <div className="absolute -top-7 left-0 w-full flex h-4 pointer-events-none">
                 {monthLabels.map((m, i) => {
-                  const xPos = (m.index * 13) - (viewIndex * 13)
+                  const xPos = (m.index * 14) - (viewIndex * 14)
                   // Only show if it's within a visible range (approximate)
-                  if (xPos < -50 || xPos > 500) return null
+                  if (xPos < -50 || xPos > 800) return null
                   return (
                     <span 
                       key={i} 
-                      className="text-[9px] font-black text-[var(--accent)] absolute uppercase tracking-widest transition-all duration-700 ease-out"
-                      style={{ left: `${xPos}px`, opacity: xPos < 0 ? 0 : 0.6 }}
+                      className="text-[10px] font-black text-[var(--accent)] absolute uppercase tracking-[0.15em] transition-all duration-700 ease-out"
+                      style={{ 
+                        left: `${xPos}px`, 
+                        opacity: xPos < 0 ? 0 : 0.8,
+                        textShadow: '0 0 12px var(--accent-border)'
+                      }}
                     >
                       {m.label}
                     </span>
@@ -165,22 +169,33 @@ export function ActivityHeatmap({ completions }: ActivityHeatmapProps) {
               {/* The Actual Grid */}
               <div 
                 className="flex gap-1 transition-transform duration-700 cubic-bezier(0.4, 0, 0.2, 1)"
-                style={{ transform: `translateX(-${viewIndex * 13}px)` }}
+                style={{ transform: `translateX(-${viewIndex * 14}px)` }}
               >
-                {weeks.map((week, wi) => (
-                  <div key={wi} className="flex flex-col gap-1 shrink-0">
-                    {week.map((day) => (
-                      <div
-                        key={day.key}
-                        title={`${day.key}: ${day.count} completion${day.count !== 1 ? 's' : ''}`}
-                        className={cn(
-                          "w-2.5 h-2.5 rounded-[1.5px] transition-all duration-300 cursor-crosshair border border-black/5 dark:border-white/5 hover:ring-2 hover:ring-[var(--accent)] hover:z-10 hover:scale-125 shadow-sm",
-                          cellClass(day.count)
-                        )}
-                      />
-                    ))}
-                  </div>
-                ))}
+                {weeks.map((week, wi) => {
+                  const month = week[0].date.getMonth()
+                  const isMonthStart = wi > 0 && weeks[wi-1][0].date.getMonth() !== month
+                  
+                  return (
+                    <div 
+                      key={wi} 
+                      className={cn(
+                        "flex flex-col gap-1 shrink-0 transition-opacity duration-300",
+                        isMonthStart && "pl-1 border-l border-[var(--border)]/30"
+                      )}
+                    >
+                      {week.map((day) => (
+                        <div
+                          key={day.key}
+                          title={`${day.key}: ${day.count} completion${day.count !== 1 ? 's' : ''}`}
+                          className={cn(
+                            "w-2.5 h-2.5 rounded-[2px] transition-all duration-300 cursor-crosshair border border-black/5 dark:border-white/5 hover:ring-2 hover:ring-[var(--accent)] hover:z-10 hover:scale-125 shadow-sm",
+                            cellClass(day.count)
+                          )}
+                        />
+                      ))}
+                    </div>
+                  )
+                })}
               </div>
             </div>
           </div>

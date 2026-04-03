@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase/client'
 import { Avatar } from './avatar'
+import { CheckCircle2, XCircle, Clock } from 'lucide-react'
+import { cn } from '@/lib/utils'
 import type { Completion, Profile, Flow } from '@/types'
 
 interface ActivityItem extends Completion {
@@ -110,17 +112,30 @@ export function ActivityFeed() {
                 Completed &ldquo;{activity.flow.title}&rdquo;
               </p>
               <div className="flex items-center gap-2 mt-2 text-xs">
-                <span className={activity.success ? 'text-[var(--verified)]' : 'text-[var(--risky)]'}>
-                  {activity.success ? '✓ Successful' : '✗ Unsuccessful'}
-                </span>
+                <div className={cn(
+                  "flex items-center gap-1.5 font-medium",
+                  activity.success ? 'text-emerald-500' : 'text-rose-500'
+                )}>
+                  {activity.success ? (
+                    <CheckCircle2 className="h-3.5 w-3.5" />
+                  ) : (
+                    <XCircle className="h-3.5 w-3.5" />
+                  )}
+                  {activity.success ? 'Successful' : 'Unsuccessful'}
+                </div>
                 {activity.difficulty && (
                   <>
-                    <span className="text-[var(--text-tertiary)]">&middot;</span>
-                    <span className="text-[var(--text-secondary)] capitalize">
-                      {activity.difficulty} difficulty
+                    <span className="text-[var(--text-tertiary)] opacity-30">&middot;</span>
+                    <span className="text-[var(--text-tertiary)] px-1.5 py-0.5 rounded-md bg-[var(--bg-tertiary)] uppercase text-[9px] font-bold tracking-wider">
+                      {activity.difficulty}
                     </span>
                   </>
                 )}
+                <span className="text-[var(--text-tertiary)] opacity-30">&middot;</span>
+                <div className="flex items-center gap-1 text-[var(--text-tertiary)]">
+                  <Clock className="h-3 w-3" />
+                  {timeAgo(activity.completed_at)}
+                </div>
               </div>
             </div>
           </div>
