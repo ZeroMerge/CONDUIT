@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { useRouter } from 'next/navigation'
 import { 
   X, RefreshCw, Loader2, Save, Sparkles, 
@@ -52,6 +53,11 @@ export function EditProfileModal({ profile, onClose }: EditProfileModalProps) {
   
   const [loading, setLoading] = useState(false)
   const [activeTab, setActiveTab] = useState<'identity' | 'socials' | 'pins'>( 'identity')
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   useEffect(() => {
     async function fetchFlows() {
@@ -168,11 +174,13 @@ export function EditProfileModal({ profile, onClose }: EditProfileModalProps) {
     f.title.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
-  return (
+  if (!mounted) return null
+
+  return createPortal(
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 md:p-10 overflow-hidden selection:bg-[var(--accent)]/30">
       {/* Backdrop with theme-aware blur */}
       <div 
-        className="absolute inset-0 bg-white/40 dark:bg-black/60 backdrop-blur-xl transition-all duration-500 animate-in fade-in"
+        className="absolute inset-0 bg-white/95 dark:bg-black/90 backdrop-blur-2xl transition-all duration-500 animate-in fade-in"
         onClick={onClose}
       />
 
@@ -190,16 +198,15 @@ export function EditProfileModal({ profile, onClose }: EditProfileModalProps) {
              </div>
           </div>
           <button 
-            onClick={onClose} 
-            className="p-2 hover:bg-[var(--bg-tertiary)] rounded-[6px] text-[var(--text-tertiary)] transition-all border border-[var(--border)] active:scale-95"
-            title="Cancel"
+            onClick={onClose}
+            className="p-2 hover:bg-[var(--bg-secondary)] rounded-full transition-all text-[var(--text-tertiary)] active:rotate-90"
           >
-            <X className="w-4 h-4" />
+            <X className="h-5 w-5" />
           </button>
         </div>
 
-        {/* Tab Navigation: Compact */}
-        <div className="flex border-b border-[var(--border)] bg-[var(--bg-secondary)]/30 sm:px-4 overflow-x-auto custom-scrollbar shrink-0">
+        {/* Dynamic Navigation Tabs */}
+        <div className="shrink-0 flex gap-2 px-6 border-b border-[var(--border)] bg-[var(--bg-secondary)]/30 overflow-x-auto no-scrollbar">
           {[
             { id: 'identity', label: 'Identity', icon: User },
             { id: 'socials', label: 'Socials', icon: LinkIcon },
@@ -222,7 +229,11 @@ export function EditProfileModal({ profile, onClose }: EditProfileModalProps) {
         </div>
 
         {/* Scrollable Content Area */}
-        <form onSubmit={handleSave} className="flex-1 overflow-y-auto p-6 sm:p-10 space-y-10 custom-scrollbar">
+        <form 
+          id="profile-edit-form"
+          onSubmit={handleSave} 
+          className="flex-1 overflow-y-auto p-6 sm:p-10 space-y-10 custom-scrollbar"
+        >
           
           <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12">
             {/* Sidebar: Identity Shuffle (Sticky Layout) */}
@@ -526,6 +537,7 @@ export function EditProfileModal({ profile, onClose }: EditProfileModalProps) {
           
           <button
             type="submit"
+            form="profile-edit-form"
             disabled={loading}
             className="flex-1 max-w-lg flex items-center justify-center gap-2 bg-[var(--accent)] hover:bg-[var(--accent-hover)] disabled:opacity-50 text-white font-bold py-3.5 px-6 rounded-xl transition-all shadow-lg shadow-[var(--accent)]/20 active:scale-[0.98]"
           >
@@ -540,6 +552,7 @@ export function EditProfileModal({ profile, onClose }: EditProfileModalProps) {
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }
