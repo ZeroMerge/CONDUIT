@@ -5,7 +5,8 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
-import { LayoutDashboard, Workflow, Users, ChevronRight } from 'lucide-react'
+import { LayoutDashboard, Workflow, Users, ChevronLeft } from 'lucide-react'
+import { ResponsiveContainer } from '@/components/ui/responsive-container'
 
 export const metadata = { title: 'Admin — Conduit' }
 
@@ -35,47 +36,53 @@ export default async function AdminLayout({
 
   return (
     <div className="min-h-screen bg-[var(--bg-primary)]">
-      {/* Admin sub-nav bar */}
-      <div className="border-b border-[var(--border)] bg-[var(--bg-secondary)]">
-        <div className="max-w-[1280px] mx-auto px-6 py-3 flex items-center gap-2 text-xs text-[var(--text-tertiary)]">
-          <Link href="/" className="hover:text-[var(--text-primary)] transition-colors">
-            Conduit
+      <div className="border-b border-[var(--border)] bg-[var(--bg-secondary)]/50 backdrop-blur-sm sticky top-[var(--nav-height)] z-40">
+        <ResponsiveContainer className="py-3 flex items-center gap-2 text-xs text-[var(--text-tertiary)]">
+          <Link href="/" className="hover:text-[var(--text-primary)] transition-colors flex items-center gap-1">
+            <ChevronLeft className="h-3 w-3" />
+            Back to Conduit
           </Link>
-          <ChevronRight className="h-3 w-3" />
-          <span className="font-medium text-[var(--accent)]">Admin Panel</span>
-        </div>
+          <span className="opacity-40">/</span>
+          <span className="font-semibold text-[var(--accent)]">Admin Panel</span>
+        </ResponsiveContainer>
       </div>
 
-      <div className="max-w-[1280px] mx-auto px-6 py-8">
-        <div className="flex gap-8">
-          {/* Sidebar */}
-          <aside className="w-48 flex-shrink-0">
-            <p className="text-xs font-semibold uppercase tracking-widest text-[var(--text-tertiary)] mb-4">
-              Admin
-            </p>
-            <nav className="space-y-1">
-              {navLinks.map(({ href, label, icon: Icon }) => (
-                <Link
-                  key={href}
-                  href={href}
-                  className="flex items-center gap-2.5 px-3 py-2 rounded text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] hover:text-[var(--text-primary)] transition-colors duration-150"
-                >
-                  <Icon className="h-4 w-4" />
-                  {label}
-                </Link>
-              ))}
+      <ResponsiveContainer className="py-6 md:py-10">
+        <div className="flex flex-col md:flex-row gap-8">
+          {/* Sidebar / Top Nav for Mobile */}
+          <aside className="w-full md:w-48 flex-shrink-0">
+            <nav className="flex md:flex-col gap-1 overflow-x-auto md:overflow-visible pb-2 md:pb-0 scrollbar-hide snap-x">
+              {navLinks.map(({ href, label, icon: Icon }) => {
+                const isActive = href === '/admin' ? true : false; // Simplification for now
+                return (
+                  <Link
+                    key={href}
+                    href={href}
+                    className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm font-medium whitespace-nowrap snap-child
+                      text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] hover:text-[var(--text-primary)] transition-all duration-200"
+                  >
+                    <Icon className="h-4 w-4" />
+                    {label}
+                  </Link>
+                );
+              })}
             </nav>
 
-            <div className="mt-8 pt-6 border-t border-[var(--border)]">
-              <p className="text-xs text-[var(--text-tertiary)] mb-1">Signed in as admin</p>
-              <p className="text-sm font-medium text-[var(--text-primary)]">{profile.username}</p>
+            <div className="hidden md:block mt-8 pt-6 border-t border-[var(--border)]">
+              <p className="text-[10px] uppercase font-bold tracking-widest text-[var(--text-tertiary)] mb-2">Authenticated</p>
+              <div className="flex items-center gap-2">
+                <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                <p className="text-sm font-semibold text-[var(--text-primary)] truncate">{profile.username}</p>
+              </div>
             </div>
           </aside>
 
           {/* Main content */}
-          <main className="flex-1 min-w-0">{children}</main>
+          <main className="flex-1 min-w-0">
+            {children}
+          </main>
         </div>
-      </div>
+      </ResponsiveContainer>
     </div>
   )
 }

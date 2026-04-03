@@ -134,17 +134,17 @@ export default function AdminFlowsPage() {
         </button>
       </div>
 
-      {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-4">
-        <div className="flex gap-2">
+      {/* Stat Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+        <div className="flex gap-2 overflow-x-auto pb-1 sm:pb-0 w-full sm:w-auto scrollbar-hide">
           {filterOptions.map((opt) => (
             <button
               key={opt.value}
               onClick={() => setFilter(opt.value)}
-              className={`px-3 py-1.5 rounded text-sm font-medium transition-colors ${
+              className={`px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all duration-200 border-2 ${
                 filter === opt.value
-                  ? 'bg-[var(--accent)] text-white'
-                  : 'bg-[var(--bg-secondary)] border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+                  ? 'bg-[var(--accent)] border-[var(--accent)] text-white shadow-md'
+                  : 'bg-[var(--bg-secondary)] border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--border-strong)] hover:text-[var(--text-primary)]'
               }`}
             >
               {opt.label}
@@ -217,7 +217,7 @@ export default function AdminFlowsPage() {
                 </div>
 
                 {/* Actions */}
-                <div className="flex items-center gap-2 flex-shrink-0 flex-wrap justify-end">
+                <div className="flex items-center gap-2 flex-shrink-0 flex-wrap sm:flex-nowrap justify-end w-full sm:w-auto pt-4 sm:pt-0 border-t sm:border-t-0 border-[var(--border)] mt-4 sm:mt-0">
                   <Link
                     href={`/flow/${flow.id}`}
                     target="_blank"

@@ -10,6 +10,7 @@ import { Avatar } from '@/components/avatar'
 import { AvatarColorPicker } from '@/components/avatar-color-picker'
 import { sanitizeUsername } from '@/lib/username'
 import { toast } from 'sonner'
+import { ResponsiveContainer } from '@/components/ui/responsive-container'
 
 function SignUpContent() {
   const router = useRouter()
@@ -164,161 +165,163 @@ function SignUpContent() {
   )
 
   return (
-    <div className="max-w-[400px] mx-auto px-6 py-12">
-      {renderProgress()}
-      {step === 1 && (
-        <div className="space-y-6">
-          <h1 className="text-xl font-geist font-semibold text-center text-[var(--text-primary)]">Create your account</h1>
+    <ResponsiveContainer narrow section="sm">
+      <div className="max-w-[400px] mx-auto">
+        {renderProgress()}
+        {step === 1 && (
+          <div className="space-y-6">
+            <h1 className="text-xl font-geist font-semibold text-center text-[var(--text-primary)]">Create your account</h1>
 
-          <div className="space-y-4">
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-[var(--bg-primary)] border border-[var(--border)] rounded px-3 py-2 text-sm focus:border-[var(--border-strong)] outline-none"
-              placeholder="you@example.com"
-            />
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-[var(--bg-primary)] border border-[var(--border)] rounded px-3 py-2 text-sm focus:border-[var(--border-strong)] outline-none"
-              placeholder="Password"
-            />
-            <input
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full bg-[var(--bg-primary)] border border-[var(--border)] rounded px-3 py-2 text-sm focus:border-[var(--border-strong)] outline-none"
-              placeholder="Confirm password"
-            />
-          </div>
-
-          <button
-            onClick={handleStep1Submit}
-            disabled={isSubmitting || !email || password.length < 8 || password !== confirmPassword}
-            className="w-full bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-sm font-medium py-2.5 rounded transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
-          >
-            {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-            {isSubmitting ? 'Creating account...' : 'Continue'} &rarr;
-          </button>
-
-          {/* SOCIAL LOGIN OPTIONS */}
-          <div className="relative my-6">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-[var(--border)]"></div>
-            </div>
-            <div className="relative flex justify-center text-xs">
-              <span className="bg-[var(--bg-primary)] px-2 text-[var(--text-tertiary)]">Or continue with</span>
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-3">
-            <button
-              type="button"
-              onClick={() => supabase.auth.signInWithOAuth({
-                provider: 'github',
-                options: { redirectTo: `${window.location.origin}/auth/callback` }
-              })}
-              className="w-full bg-transparent border border-[var(--border)] hover:border-[var(--border-strong)] text-[var(--text-primary)] text-sm font-medium py-2 rounded transition-colors duration-150"
-            >
-              GitHub
-            </button>
-            <button
-              type="button"
-              onClick={() => supabase.auth.signInWithOAuth({
-                provider: 'google',
-                options: { redirectTo: `${window.location.origin}/auth/callback` }
-              })}
-              className="w-full bg-transparent border border-[var(--border)] hover:border-[var(--border-strong)] text-[var(--text-primary)] text-sm font-medium py-2 rounded transition-colors duration-150"
-            >
-              Google
-            </button>
-          </div>
-
-          <p className="text-sm text-center text-[var(--text-secondary)] mt-6">
-            Already have an account? <Link href="/auth/signin" className="text-[var(--accent)] hover:underline">Sign in</Link>
-          </p>
-        </div>
-      )}
-
-      {step === 2 && (
-        <div className="space-y-6">
-          <h1 className="text-xl font-geist font-semibold text-center text-[var(--text-primary)]">Choose your username</h1>
-          <div className="relative">
-            <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(sanitizeUsername(e.target.value))}
-              className="w-full bg-[var(--bg-primary)] border border-[var(--border)] rounded px-3 py-2 text-sm pr-10 focus:border-[var(--border-strong)] outline-none"
-              placeholder="username"
-            />
-            <div className="absolute right-3 top-1/2 -translate-y-1/2">
-              {usernameStatus === 'checking' && <Loader2 className="h-4 w-4 animate-spin" />}
-              {usernameStatus === 'available' && <Check className="h-4 w-4 text-[var(--verified)]" />}
-              {usernameStatus === 'taken' && <X className="h-4 w-4 text-[var(--risky)]" />}
-            </div>
-          </div>
-          <button
-            onClick={() => setStep(3)}
-            disabled={usernameStatus !== 'available'}
-            className="w-full bg-[var(--accent)] text-white text-sm font-medium py-2 rounded disabled:opacity-50"
-          >
-            Continue &rarr;
-          </button>
-        </div>
-      )}
-
-      {step === 3 && (
-        <div className="space-y-6">
-          <div className="text-center">
-            <h1 className="text-xl font-geist font-semibold text-[var(--text-primary)]">Pick your robot</h1>
-            <p className="text-sm text-[var(--text-tertiary)] mt-1">Select a base bot and customize the fill.</p>
-          </div>
-
-          <div className="grid grid-cols-3 gap-3">
-            {avatarOptions.map(seed => (
-              <button
-                key={seed}
-                onClick={() => setSelectedAvatar(seed)}
-                className={`p-2 rounded-xl border-2 transition-all ${selectedAvatar === seed ? 'border-[var(--accent)] bg-[var(--accent-subtle)]' : 'border-[var(--border)] bg-[var(--bg-secondary)]'}`}
-              >
-                <Avatar seed={seed} size={64} bg_color={selectedColor} />
-              </button>
-            ))}
-          </div>
-
-          <button 
-            type="button"
-            onClick={() => {
-              const options = Array.from({ length: 9 }, () => crypto.randomUUID())
-              setAvatarOptions(options)
-              setSelectedAvatar(options[0])
-            }}
-            className="flex items-center justify-center gap-2 w-full text-xs font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
-          >
-            <RefreshCw className="h-3 w-3" /> Shuffle Robots
-          </button>
-
-          <div className="pt-4 border-t border-[var(--border)]">
-            <p className="text-xs font-bold uppercase tracking-widest text-[var(--text-tertiary)] mb-3 text-center">Background Fill</p>
-            <div className="flex justify-center">
-              <AvatarColorPicker 
-                currentValue={selectedColor} 
-                onSelect={setSelectedColor} 
+            <div className="space-y-4">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full bg-[var(--bg-primary)] border border-[var(--border)] rounded px-3 py-2 text-sm focus:border-[var(--border-strong)] outline-none"
+                placeholder="you@example.com"
+              />
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full bg-[var(--bg-primary)] border border-[var(--border)] rounded px-3 py-2 text-sm focus:border-[var(--border-strong)] outline-none"
+                placeholder="Password"
+              />
+              <input
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="w-full bg-[var(--bg-primary)] border border-[var(--border)] rounded px-3 py-2 text-sm focus:border-[var(--border-strong)] outline-none"
+                placeholder="Confirm password"
               />
             </div>
-          </div>
 
-          <button
-            onClick={handleStep3Submit}
-            className="w-full bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-sm font-medium py-3 rounded-xl transition-all shadow-sm hover:shadow-md"
-          >
-            Enter Conduit &rarr;
-          </button>
-        </div>
-      )}
-    </div>
+            <button
+              onClick={handleStep1Submit}
+              disabled={isSubmitting || !email || password.length < 8 || password !== confirmPassword}
+              className="w-full bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-sm font-medium py-2.5 rounded transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+            >
+              {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+              {isSubmitting ? 'Creating account...' : 'Continue'} &rarr;
+            </button>
+
+            {/* SOCIAL LOGIN OPTIONS */}
+            <div className="relative my-6">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-[var(--border)]"></div>
+              </div>
+              <div className="relative flex justify-center text-xs">
+                <span className="bg-[var(--bg-primary)] px-2 text-[var(--text-tertiary)]">Or continue with</span>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-3">
+              <button
+                type="button"
+                onClick={() => supabase.auth.signInWithOAuth({
+                  provider: 'github',
+                  options: { redirectTo: `${window.location.origin}/auth/callback` }
+                })}
+                className="w-full bg-transparent border border-[var(--border)] hover:border-[var(--border-strong)] text-[var(--text-primary)] text-sm font-medium py-2 rounded transition-colors duration-150"
+              >
+                GitHub
+              </button>
+              <button
+                type="button"
+                onClick={() => supabase.auth.signInWithOAuth({
+                  provider: 'google',
+                  options: { redirectTo: `${window.location.origin}/auth/callback` }
+                })}
+                className="w-full bg-transparent border border-[var(--border)] hover:border-[var(--border-strong)] text-[var(--text-primary)] text-sm font-medium py-2 rounded transition-colors duration-150"
+              >
+                Google
+              </button>
+            </div>
+
+            <p className="text-sm text-center text-[var(--text-secondary)] mt-6">
+              Already have an account? <Link href="/auth/signin" className="text-[var(--accent)] hover:underline">Sign in</Link>
+            </p>
+          </div>
+        )}
+
+        {step === 2 && (
+          <div className="space-y-6">
+            <h1 className="text-xl font-geist font-semibold text-center text-[var(--text-primary)]">Choose your username</h1>
+            <div className="relative">
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(sanitizeUsername(e.target.value))}
+                className="w-full bg-[var(--bg-primary)] border border-[var(--border)] rounded px-3 py-2 text-sm pr-10 focus:border-[var(--border-strong)] outline-none"
+                placeholder="username"
+              />
+              <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                {usernameStatus === 'checking' && <Loader2 className="h-4 w-4 animate-spin" />}
+                {usernameStatus === 'available' && <Check className="h-4 w-4 text-[var(--verified)]" />}
+                {usernameStatus === 'taken' && <X className="h-4 w-4 text-[var(--risky)]" />}
+              </div>
+            </div>
+            <button
+              onClick={() => setStep(3)}
+              disabled={usernameStatus !== 'available'}
+              className="w-full bg-[var(--accent)] text-white text-sm font-medium py-2 rounded disabled:opacity-50"
+            >
+              Continue &rarr;
+            </button>
+          </div>
+        )}
+
+        {step === 3 && (
+          <div className="space-y-6">
+            <div className="text-center">
+              <h1 className="text-xl font-geist font-semibold text-[var(--text-primary)]">Pick your robot</h1>
+              <p className="text-sm text-[var(--text-tertiary)] mt-1">Select a base bot and customize the fill.</p>
+            </div>
+
+            <div className="grid grid-cols-3 gap-3">
+              {avatarOptions.map(seed => (
+                <button
+                  key={seed}
+                  onClick={() => setSelectedAvatar(seed)}
+                  className={`p-2 rounded-xl border-2 transition-all ${selectedAvatar === seed ? 'border-[var(--accent)] bg-[var(--accent-subtle)]' : 'border-[var(--border)] bg-[var(--bg-secondary)]'}`}
+                >
+                  <Avatar seed={seed} size={64} bg_color={selectedColor} />
+                </button>
+              ))}
+            </div>
+
+            <button 
+              type="button"
+              onClick={() => {
+                const options = Array.from({ length: 9 }, () => crypto.randomUUID())
+                setAvatarOptions(options)
+                setSelectedAvatar(options[0])
+              }}
+              className="flex items-center justify-center gap-2 w-full text-xs font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+            >
+              <RefreshCw className="h-3 w-3" /> Shuffle Robots
+            </button>
+
+            <div className="pt-4 border-t border-[var(--border)]">
+              <p className="text-xs font-bold uppercase tracking-widest text-[var(--text-tertiary)] mb-3 text-center">Background Fill</p>
+              <div className="flex justify-center">
+                <AvatarColorPicker 
+                  currentValue={selectedColor} 
+                  onSelect={setSelectedColor} 
+                />
+              </div>
+            </div>
+
+            <button
+              onClick={handleStep3Submit}
+              className="w-full bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-sm font-medium py-3 rounded-xl transition-all shadow-sm hover:shadow-md"
+            >
+              Enter Conduit &rarr;
+            </button>
+          </div>
+        )}
+      </div>
+    </ResponsiveContainer>
   )
 }
 

@@ -8,6 +8,8 @@ import { supabase } from '@/lib/supabase/client'
 import { useUserStore } from '@/lib/stores/user'
 import { toast } from 'sonner'
 
+import { ResponsiveContainer } from '@/components/ui/responsive-container'
+
 function SignInContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -59,91 +61,93 @@ function SignInContent() {
   }
 
   return (
-    <div className="max-w-[400px] mx-auto px-6 py-12">
-      <h1 className="text-xl font-geist font-semibold text-[var(--text-primary)] text-center mb-8">
-        Sign in to Conduit
-      </h1>
+    <ResponsiveContainer narrow section="sm">
+      <div className="max-w-[400px] mx-auto">
+        <h1 className="text-xl font-geist font-semibold text-[var(--text-primary)] text-center mb-8">
+          Sign in to Conduit
+        </h1>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div>
-          <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
-            Email
-          </label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full bg-[var(--bg-primary)] border border-[var(--border)] focus:border-[var(--border-strong)] outline-none rounded px-3 py-2 text-sm text-[var(--text-primary)] transition-colors duration-150"
-            placeholder="you@example.com"
-            required
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
-            Password
-          </label>
-          <div className="relative">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+              Email
+            </label>
             <input
-              type={showPassword ? 'text' : 'password'}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-[var(--bg-primary)] border border-[var(--border)] focus:border-[var(--border-strong)] outline-none rounded px-3 py-2 text-sm text-[var(--text-primary)] transition-colors duration-150 pr-10"
-              placeholder="Your password"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full bg-[var(--bg-primary)] border border-[var(--border)] focus:border-[var(--border-strong)] outline-none rounded px-3 py-2 text-sm text-[var(--text-primary)] transition-colors duration-150"
+              placeholder="you@example.com"
               required
             />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] transition-colors duration-150"
-            >
-              {showPassword ? (
-                <EyeOff className="h-4 w-4" />
-              ) : (
-                <Eye className="h-4 w-4" />
-              )}
-            </button>
           </div>
+
+          <div>
+            <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+              Password
+            </label>
+            <div className="relative">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full bg-[var(--bg-primary)] border border-[var(--border)] focus:border-[var(--border-strong)] outline-none rounded px-3 py-2 text-sm text-[var(--text-primary)] transition-colors duration-150 pr-10"
+                placeholder="Your password"
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] transition-colors duration-150"
+              >
+                {showPassword ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
+              </button>
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading || !email.trim() || !password}
+            className="w-full bg-[var(--accent)] hover:bg-[var(--accent-hover)] disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium py-2 rounded transition-colors duration-150"
+          >
+            {loading ? 'Signing in...' : 'Sign in \u2192'}
+          </button>
+        </form>
+
+        <div className="relative my-6">
+          <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-[var(--border)]"></div></div>
+          <div className="relative flex justify-center text-xs"><span className="bg-[var(--bg-primary)] px-2 text-[var(--text-tertiary)]">Or continue with</span></div>
         </div>
 
-        <button
-          type="submit"
-          disabled={loading || !email.trim() || !password}
-          className="w-full bg-[var(--accent)] hover:bg-[var(--accent-hover)] disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium py-2 rounded transition-colors duration-150"
-        >
-          {loading ? 'Signing in...' : 'Sign in \u2192'}
-        </button>
-      </form>
+        <div className="flex flex-col gap-3">
+          <button
+            type="button"
+            onClick={() => supabase.auth.signInWithOAuth({ provider: 'github', options: { redirectTo: `${window.location.origin}/auth/callback` } })}
+            className="w-full bg-transparent border border-[var(--border)] hover:border-[var(--border-strong)] text-[var(--text-primary)] text-sm font-medium py-2 rounded transition-colors duration-150"
+          >
+            GitHub
+          </button>
+          <button
+            type="button"
+            onClick={() => supabase.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: `${window.location.origin}/auth/callback` } })}
+            className="w-full bg-transparent border border-[var(--border)] hover:border-[var(--border-strong)] text-[var(--text-primary)] text-sm font-medium py-2 rounded transition-colors duration-150"
+          >
+            Google
+          </button>
+        </div>
 
-      <div className="relative my-6">
-        <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-[var(--border)]"></div></div>
-        <div className="relative flex justify-center text-xs"><span className="bg-[var(--bg-primary)] px-2 text-[var(--text-tertiary)]">Or continue with</span></div>
+        <p className="text-sm text-center text-[var(--text-secondary)] mt-6">
+          Don&apos;t have an account?{' '}
+          <Link href="/auth/signup" className="text-[var(--accent)] hover:underline">
+            Create one
+          </Link>
+        </p>
       </div>
-
-      <div className="flex flex-col gap-3">
-        <button
-          type="button"
-          onClick={() => supabase.auth.signInWithOAuth({ provider: 'github', options: { redirectTo: `${window.location.origin}/auth/callback` } })}
-          className="w-full bg-transparent border border-[var(--border)] hover:border-[var(--border-strong)] text-[var(--text-primary)] text-sm font-medium py-2 rounded transition-colors duration-150"
-        >
-          GitHub
-        </button>
-        <button
-          type="button"
-          onClick={() => supabase.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: `${window.location.origin}/auth/callback` } })}
-          className="w-full bg-transparent border border-[var(--border)] hover:border-[var(--border-strong)] text-[var(--text-primary)] text-sm font-medium py-2 rounded transition-colors duration-150"
-        >
-          Google
-        </button>
-      </div>
-
-      <p className="text-sm text-center text-[var(--text-secondary)] mt-6">
-        Don&apos;t have an account?{' '}
-        <Link href="/auth/signup" className="text-[var(--accent)] hover:underline">
-          Create one
-        </Link>
-      </p>
-    </div>
+    </ResponsiveContainer>
   )
 }
 

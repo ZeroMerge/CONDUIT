@@ -19,9 +19,10 @@ export function FlowCard({ flow }: FlowCardProps) {
       href={`/flow/${flow.id}`}
       className="
         block group relative bg-[var(--bg-primary)] border border-[var(--border)]
-        hover:border-[var(--border-strong)] rounded-2xl p-5
-        transition-all duration-200 press-scale
-        hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] dark:hover:shadow-[0_8px_30px_rgb(0,0,0,0.4)]
+        hover:border-[var(--border-strong)] rounded-[24px] p-6
+        transition-all duration-300 press-scale
+        hover:shadow-[0_20px_50px_rgba(0,0,-1,0.08)] dark:hover:shadow-[0_20px_50px_rgba(0,0,0,0.5)]
+        hover:-translate-y-1
       "
     >
       <div className="flex justify-between items-start mb-3 gap-2">
@@ -41,25 +42,20 @@ export function FlowCard({ flow }: FlowCardProps) {
         {flow.description}
       </p>
 
-      <div className="grid grid-cols-3 gap-2 border-t border-[var(--border)] pt-4">
-        <div>
-          <p className="text-[10px] uppercase font-bold tracking-widest text-[var(--text-tertiary)] mb-0.5">Runs</p>
-          <div className="flex items-center gap-1 text-[var(--text-primary)] font-semibold text-sm">
-            <Zap className="h-3.5 w-3.5 text-[var(--text-tertiary)]" /> {rCount}
-          </div>
+      <div className="flex items-center gap-6 pt-2">
+        <div className="flex items-center gap-1.5 min-w-0">
+          <Zap className="h-4 w-4 text-[var(--accent)]" />
+          <span className="text-sm font-semibold text-[var(--text-primary)]">{rCount}</span>
         </div>
-        <div>
-          <p className="text-[10px] uppercase font-bold tracking-widest text-[var(--text-tertiary)] mb-0.5">Done</p>
-          <div className="flex items-center gap-1 text-[var(--text-primary)] font-semibold text-sm">
-            <CheckCircle className="h-3.5 w-3.5 text-[var(--safe)] group-hover:block" />
+        <div className="flex items-center gap-1.5 min-w-0">
+          <CheckCircle className="h-4 w-4 text-[var(--safe)]" />
+          <span className="text-sm font-semibold text-[var(--text-primary)]">
             {completionRate !== null ? `${completionRate}%` : '--'}
-          </div>
+          </span>
         </div>
-        <div>
-           <p className="text-[10px] uppercase font-bold tracking-widest text-[var(--text-tertiary)] mb-0.5">Time</p>
-           <div className="flex items-center gap-1 text-[var(--text-primary)] font-semibold text-sm">
-             <Clock className="h-3.5 w-3.5 text-[var(--text-tertiary)]" /> {flow.estimated_minutes}m
-           </div>
+        <div className="flex items-center gap-1.5 min-w-0">
+          <Clock className="h-4 w-4 text-[var(--text-tertiary)]" />
+          <span className="text-sm font-semibold text-[var(--text-primary)]">{flow.estimated_minutes}m</span>
         </div>
       </div>
 
