@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { Edit2 } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
 import { EditProfileModal } from './edit-profile-modal'
+import { cn } from '@/lib/utils'
 import type { Profile } from '@/types'
 
 interface ProfileEditTriggerProps {
@@ -44,16 +45,17 @@ export function ProfileEditTrigger({ profile }: ProfileEditTriggerProps) {
     <>
       <button
         onClick={() => setShowModal(true)}
-        className={`group flex items-center gap-2 px-6 py-2.5 text-sm font-bold rounded-full transition-all duration-300 shadow-sm hover:shadow-md active:scale-95 ${
+        className={cn(
+          "w-full group flex items-center justify-center gap-2.5 px-4 py-2.5 text-[11px] font-black uppercase tracking-widest rounded-[6px] transition-all duration-300 shadow-sm border active:scale-[0.98]",
           isIncomplete
-          ? 'bg-[var(--accent)] text-white hover:bg-[var(--accent-hover)] ring-2 ring-[var(--accent-subtle)] animate-[subtle-pulse_3s_infinite]'
-          : 'bg-[var(--bg-secondary)] text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)] border border-[var(--border-strong)]'
-        }`}
+            ? "bg-[var(--bg-secondary)] border-[var(--accent)]/50 text-[var(--accent)] hover:bg-[var(--accent)]/5"
+            : "bg-[var(--bg-secondary)] border-[var(--border)] text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)] hover:border-[var(--text-tertiary)]"
+        )}
       >
-        <Edit2 className={`h-4 w-4 transition-transform group-hover:rotate-12 ${isIncomplete ? 'text-white' : 'text-[var(--accent)]'}`} /> 
-        <span>{isIncomplete ? 'Complete Profile' : 'Edit Profile'}</span>
+        <Edit2 className={cn("h-3.5 w-3.5 transition-transform group-hover:rotate-12", isIncomplete ? "text-[var(--accent)]" : "text-[var(--text-tertiary)]")} /> 
+        <span>{isIncomplete ? 'Complete Identity' : 'Edit Identity'}</span>
         {isIncomplete && (
-          <span className="flex h-2 w-2 rounded-full bg-white animate-ping ml-1" />
+          <span className="flex h-1.5 w-1.5 rounded-full bg-[var(--accent)] animate-pulse" />
         )}
       </button>
 
