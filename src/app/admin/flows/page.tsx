@@ -139,7 +139,7 @@ export default function AdminFlowsPage() {
 
       {/* Stat Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-        <div className="flex gap-2 overflow-x-auto pb-1 sm:pb-0 w-full sm:w-auto scrollbar-hide">
+        <div className="flex flex-wrap gap-2 w-full">
           {filterOptions.map((opt) => (
             <button
               key={opt.value}

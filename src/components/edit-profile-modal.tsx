@@ -321,7 +321,7 @@ export function EditProfileModal({ profile, onClose }: EditProfileModalProps) {
 
                   <div className="space-y-2 pt-2">
                      <label className="flex items-center justify-between text-[9px] font-black uppercase tracking-widest text-[var(--text-tertiary)] opacity-60">
-                       <span className="flex items-center gap-2"><LinkIcon className="h-3 w-3" /> Core Link (Portfolio)</span>
+                       <span className="flex items-center gap-2"><Globe className="h-3 w-3" /> Professional Resume Link</span>
                      </label>
                      <div className="relative group/input">
                         <div className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-[var(--bg-tertiary)] rounded-[4px] border border-[var(--border)] group-focus-within/input:border-[var(--accent)]/50 transition-colors">

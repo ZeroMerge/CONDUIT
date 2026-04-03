@@ -7,11 +7,12 @@ import {
   ArrowUpRight, Award, Trophy, Shield, 
   ExternalLink, Mail, Share2, Info,
   Flame, BarChart3, Database, Workflow,
-  Building2, Users, Zap, Link as LinkIcon,
+  Building2, Users, Zap, Link as LinkIcon, ShieldCheck,
   Youtube, Linkedin, Instagram, AtSign
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { Avatar } from '@/components/avatar'
+import { FollowButton } from '@/components/follow-button'
 import { ProfileEditTrigger } from '@/components/profile-edit-trigger'
 import { ActivityHeatmap } from '@/components/activity-heatmap'
 import ReactMarkdown from 'react-markdown'
@@ -43,7 +44,7 @@ function getTier(trustScore: number = 0) {
   if (trustScore >= 1000) return { name: 'Conduit Overseer', icon: Trophy, color: 'text-rose-500', bg: 'bg-rose-500/10', border: 'border-rose-500/20' }
   if (trustScore >= 500) return { name: 'System Lead', icon: Shield, color: 'text-purple-500', bg: 'bg-purple-500/10', border: 'border-purple-500/20' }
   if (trustScore >= 100) return { name: 'Elite Architect', icon: Award, color: 'text-amber-500', bg: 'bg-amber-500/10', border: 'border-amber-500/20' }
-  return { name: 'Core Contributor', icon: Info, color: 'text-emerald-500', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20' }
+  return { name: 'Core Contributor', icon: ShieldCheck, color: 'text-emerald-500', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20' }
 }
 
 function getSocialIcon(url: string) {
@@ -113,6 +114,28 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
 
   const { data: { user: currentUser } } = await supabase.auth.getUser()
   const isOwner = currentUser?.id === p.id
+
+  // Stats fetching
+  const { count: followerCount } = await supabase
+    .from('follows')
+    .select('*', { count: 'exact', head: true })
+    .eq('following_id', p.id)
+
+  const { count: followingCount } = await supabase
+    .from('follows')
+    .select('*', { count: 'exact', head: true })
+    .eq('follower_id', p.id)
+
+  const { data: followRecord } = currentUser 
+    ? await supabase
+        .from('follows')
+        .select('*')
+        .eq('follower_id', currentUser.id)
+        .eq('following_id', p.id)
+        .maybeSingle()
+    : { data: null }
+
+  const isFollowing = !!followRecord
   
   const tier = getTier(p.trust_score || 0)
   const strength = Math.round(
@@ -153,9 +176,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
               <Share2 className="h-3.5 w-3.5 group-hover:text-[var(--accent)] transition-colors" />
             </button>
             {!isOwner && (
-               <button className="px-5 py-2 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-[9px] font-black uppercase tracking-widest rounded-[6px] transition-all shadow-xl shadow-[var(--accent)]/10 active:scale-95">
-                 Follow +
-               </button>
+               <FollowButton targetUserId={p.id} initialIsFollowing={isFollowing} />
             )}
           </div>
         </div>
@@ -188,15 +209,15 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
                   @{p.username}
                 </p>
                 
-                {/* Growth Stats: Visible only in row on Mobile */}
                 <div className="flex items-center gap-3.5 mt-3 lg:hidden">
                    <div className="flex items-center gap-1.5 hover:text-[var(--accent)] cursor-pointer transition-colors group/stat">
                      <Users className="h-3.5 w-3.5 text-[var(--text-tertiary)] group-hover/stat:text-[var(--accent)]" />
-                     <span className="text-[11px] font-black text-[var(--text-primary)]">124</span>
+                     <span className="text-[11px] font-black text-[var(--text-primary)]">{followerCount || 0}</span>
                      <span className="text-[9px] font-black text-[var(--text-tertiary)] uppercase tracking-tighter opacity-60">Followers</span>
                    </div>
                    <div className="flex items-center gap-1.5 hover:text-[var(--accent)] cursor-pointer transition-colors group/stat">
-                     <span className="text-[11px] font-black text-[var(--text-primary)]">82</span>
+                     <Zap className="h-3.5 w-3.5 text-[var(--text-tertiary)] group-hover/stat:text-[var(--accent)]" />
+                     <span className="text-[11px] font-black text-[var(--text-primary)]">{followingCount || 0}</span>
                      <span className="text-[9px] font-black text-[var(--text-tertiary)] uppercase tracking-tighter opacity-60">Following</span>
                    </div>
                 </div>
@@ -219,13 +240,11 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
               )}
               <div className="flex justify-start">
                    <div className={cn(
-                     "px-5 py-2 rounded-[4px] border shadow-lg backdrop-blur-xl flex items-center gap-2.5 transition-all duration-300 hover:border-[var(--accent)]/30",
-                     tier.bg, tier.border
+                     "inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--accent-subtle)] border border-[var(--accent-border)] text-[var(--accent-text)] text-xs font-bold uppercase tracking-widest transition-all hover:scale-[1.02] active:scale-[0.98]",
+                     tier.color
                    )}>
-                     <tier.icon className={cn("h-3.5 w-3.5", tier.color)} />
-                     <span className={cn("text-[10px] font-black uppercase tracking-[0.2em]", tier.color)}>
-                       {tier.name}
-                     </span>
+                     <tier.icon className="h-3 w-3 fill-current" />
+                     {tier.name}
                    </div>
                 </div>
               </div>
@@ -235,14 +254,14 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
               <div className="flex items-center gap-2.5 hover:bg-[var(--bg-tertiary)] p-2 rounded-[6px] cursor-pointer transition-all border border-transparent hover:border-[var(--border)] group/item">
                 <Users className="h-3.5 w-3.5 text-[var(--text-tertiary)] group-hover/item:text-[var(--accent)] transition-colors" />
                 <div className="flex items-center gap-1.5">
-                  <span className="text-sm font-black text-[var(--text-primary)]">124</span>
+                  <span className="text-sm font-black text-[var(--text-primary)]">{followerCount || 0}</span>
                   <span className="text-[10px] font-black text-[var(--text-tertiary)] uppercase tracking-widest opacity-60">Followers</span>
                 </div>
               </div>
               <div className="flex items-center gap-2.5 hover:bg-[var(--bg-tertiary)] p-2 rounded-[6px] cursor-pointer transition-all border border-transparent hover:border-[var(--border)] group/item">
                 <Zap className="h-3.5 w-3.5 text-[var(--text-tertiary)] group-hover/item:text-[var(--accent)] transition-colors" />
                 <div className="flex items-center gap-1.5">
-                  <span className="text-sm font-black text-[var(--text-primary)]">82</span>
+                  <span className="text-sm font-black text-[var(--text-primary)]">{followingCount || 0}</span>
                   <span className="text-[10px] font-black text-[var(--text-tertiary)] uppercase tracking-widest opacity-60">Following</span>
                 </div>
               </div>
@@ -335,8 +354,8 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
                     </div>
                     <h3 className="text-[10px] font-black uppercase tracking-[0.25em] text-[var(--text-primary)]">System Overview</h3>
                  </div>
-                 <Link href={`/profile/${p.username}/portfolio`} className="group flex items-center gap-2 px-4 py-2 rounded-full border border-[var(--border)] hover:border-[var(--accent)] hover:bg-[var(--accent)]/5 transition-all">
-                    <span className="text-[9px] font-black uppercase tracking-widest text-[var(--text-tertiary)] group-hover:text-[var(--accent)] transition-colors">Portfolio</span>
+                 <Link href={`/resume/${p.username}`} className="group flex items-center gap-2 px-4 py-2 rounded-full border border-[var(--border)] hover:border-[var(--accent)] hover:bg-[var(--accent)]/5 transition-all">
+                    <span className="text-[9px] font-black uppercase tracking-widest text-[var(--text-tertiary)] group-hover:text-[var(--accent)] transition-colors">Resume</span>
                     <ArrowUpRight className="h-3 w-3 text-[var(--accent)] transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                  </Link>
                </div>

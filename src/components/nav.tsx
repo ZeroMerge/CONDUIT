@@ -91,7 +91,7 @@ export function Nav() {
           TOP NAV BAR
       ══════════════════════════════════════════════════════ */}
       <nav
-        className="sticky top-0 z-50 border-b border-[var(--border)] bg-[var(--bg-primary)]/95 backdrop-blur-md shadow-sm"
+        className="sticky top-0 z-[60] border-b border-[var(--border)] bg-[var(--bg-primary)]/95 backdrop-blur-md shadow-sm"
         style={{ height: 'var(--nav-height)' }}
       >
         <div className="page-container flex items-center justify-between h-full gap-4">
@@ -142,8 +142,10 @@ export function Nav() {
 
                   {/* Avatar dropdown */}
                   <div className="group relative">
-                    {/* Invisible padding to bridge hover gap */}
-                    <button className="flex items-center gap-2 hover:opacity-80 transition-opacity py-2">
+                    {/* Invisible bridge to prevent hover gap closure */}
+                    <div className="absolute -bottom-4 left-0 right-0 h-4 z-10" />
+                    
+                    <button className="flex items-center gap-2 hover:opacity-80 transition-opacity py-2 relative z-20">
                       <Avatar seed={profile.avatar_seed} size={32} />
                       <span className="text-sm font-medium text-[var(--text-primary)] hidden lg:block leading-none">
                         {profile.username}

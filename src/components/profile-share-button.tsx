@@ -19,8 +19,8 @@ export function ProfileShareButton({ username }: ProfileShareButtonProps) {
       if (navigator.share) {
         // Native Share (Mobile)
         await navigator.share({
-          title: `${username}'s AI Builder Profile — Conduit`,
-          text: `Check out ${username}'s verified AI workflow portfolio on Conduit.`,
+          title: `${username}'s AI Resume — Verified Developer Status`,
+          text: `Review ${username}'s verified AI developer status and resume on Conduit.`,
           url,
         })
       } else {

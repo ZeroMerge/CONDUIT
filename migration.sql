@@ -43,3 +43,37 @@ CREATE TABLE IF NOT EXISTS public.merge_requests (
 -- Re-grant permissions
 GRANT ALL ON ALL TABLES IN SCHEMA public TO authenticated, service_role;
 GRANT SELECT ON ALL TABLES IN SCHEMA public TO anon;
+
+-- ══════════════════════════════════════════════════════
+-- SOCIAL: FOLLOWS
+-- ══════════════════════════════════════════════════════
+CREATE TABLE IF NOT EXISTS public.follows (
+  follower_id UUID REFERENCES auth.users NOT NULL,
+  following_id UUID REFERENCES auth.users NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  PRIMARY KEY (follower_id, following_id)
+);
+
+-- RLS
+ALTER TABLE public.follows ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Follows are viewable by everyone."
+  ON public.follows FOR SELECT
+  USING ( true );
+
+CREATE POLICY "Users can follow others."
+  ON public.follows FOR INSERT
+  WITH CHECK ( auth.uid() = follower_id );
+
+CREATE POLICY "Users can unfollow others."
+  ON public.follows FOR DELETE
+  USING ( auth.uid() = follower_id );
+
+-- Indexes
+CREATE INDEX IF NOT EXISTS follows_follower_id_idx ON public.follows (follower_id);
+CREATE INDEX IF NOT EXISTS follows_following_id_idx ON public.follows (following_id);
+
+-- Re-grant permissions for the new table
+GRANT ALL ON public.follows TO authenticated, service_role;
+GRANT SELECT ON public.follows TO anon;
+
