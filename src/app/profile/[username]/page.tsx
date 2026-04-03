@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { Avatar } from '@/components/avatar'
 import { Flame, Star, GitFork, PlayCircle, Trophy } from 'lucide-react'
 import { FlowCard } from '@/components/flow-card'
-import { Heatmap } from '@/components/heatmap'
+import { ActivityHeatmap } from '@/components/activity-heatmap'
 import { ResponsiveContainer } from '@/components/ui/responsive-container'
 import { SnapCarousel } from '@/components/ui/snap-carousel'
 
@@ -76,7 +76,7 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
           <div className="bg-[var(--bg-primary)] border border-[var(--border)] p-5 md:p-6 rounded-2xl">
             <h3 className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-[var(--text-tertiary)] mb-4">Activity Heatmap</h3>
             <div className="-mx-5 px-5 overflow-x-auto snap-x scrollbar-hide py-1">
-              <Heatmap completedDates={(completions || []).map(c => c.completed_at)} />
+              <ActivityHeatmap completions={completions || []} />
             </div>
           </div>
           
