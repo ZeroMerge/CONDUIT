@@ -7,7 +7,8 @@ import {
   ArrowUpRight, Award, Trophy, Shield, 
   ExternalLink, Mail, Share2, Info,
   Flame, BarChart3, Database, Workflow,
-  Building2, Users, Zap, Link as LinkIcon
+  Building2, Users, Zap, Link as LinkIcon,
+  Youtube, Linkedin, Instagram, AtSign
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { Avatar } from '@/components/avatar'
@@ -18,22 +19,23 @@ import { cn } from '@/lib/utils'
 import type { Profile } from '@/types'
 
 interface ProfilePageProps {
-  params: { username: string }
+  params: Promise<{ username: string }>
 }
 
 export async function generateMetadata({ params }: ProfilePageProps): Promise<Metadata> {
+  const { username } = await params
   const supabase = await createClient()
   const { data: profile } = await supabase
     .from('profiles')
     .select('full_name, username')
-    .eq('username', params.username)
+    .eq('username', username)
     .single()
 
   if (!profile) return { title: 'User Not Found' }
 
   return {
-    title: `${profile.full_name} (@${profile.username}) | Conduit`,
-    description: `View ${profile.full_name}'s developer profile and contributions on Conduit.`,
+    title: `${profile.full_name || profile.username} (@${profile.username}) | Conduit`,
+    description: `View ${profile.full_name || profile.username}'s developer profile and contributions on Conduit.`,
   }
 }
 
@@ -48,10 +50,15 @@ function getSocialIcon(url: string) {
   const lowercase = url.toLowerCase()
   if (lowercase.includes('twitter.com') || lowercase.includes('x.com')) return Twitter
   if (lowercase.includes('github.com')) return Github
+  if (lowercase.includes('linkedin.com')) return Linkedin
+  if (lowercase.includes('youtube.com')) return Youtube
+  if (lowercase.includes('instagram.com')) return Instagram
+  if (lowercase.includes('threads.net')) return AtSign
   return LinkIcon
 }
 
 export default async function ProfilePage({ params }: ProfilePageProps) {
+  const { username } = await params
   const supabase = await createClient()
   const { data: profile } = await supabase
     .from('profiles')
@@ -65,13 +72,13 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
         category,
         nodes
       ),
-      completions:flow_completions (
+      completions:completions (
         id,
         completed_at,
         flow_id
       )
     `)
-    .eq('username', params.username)
+    .eq('username', username)
     .single()
 
   if (!profile) notFound()

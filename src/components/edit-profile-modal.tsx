@@ -6,7 +6,7 @@ import {
   X, RefreshCw, Loader2, Save, Sparkles, 
   User, Link as LinkIcon, Twitter, Github, MapPin, 
   FileText, Building2, Plus, Trash2, Search, Check,
-  Workflow
+  Workflow, Linkedin, Youtube, Instagram
 } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
 import { useUserStore } from '@/lib/stores/user'
@@ -190,9 +190,9 @@ export function EditProfileModal({ profile, onClose }: EditProfileModalProps) {
         {/* Tab Navigation */}
         <div className="flex border-b border-[var(--border)] bg-[var(--bg-secondary)]/30 px-6">
           {[
-            { id: 'identity', label: 'Basic Info', icon: User },
-            { id: 'socials', label: 'Social Accounts', icon: LinkIcon },
-            { id: 'pins', label: 'Pinned Flows', icon: Workflow },
+            { id: 'identity', label: 'Identity', icon: User },
+            { id: 'socials', label: 'Socials', icon: LinkIcon },
+            { id: 'pins', label: 'Showcase', icon: Workflow },
           ].map(tab => (
             <button
               key={tab.id}
@@ -200,8 +200,8 @@ export function EditProfileModal({ profile, onClose }: EditProfileModalProps) {
               className={cn(
                 "flex items-center gap-2 px-6 py-4 text-[10px] font-black uppercase tracking-[0.2em] border-b-2 transition-all",
                 activeTab === tab.id 
-                  ? "border-[var(--accent)] text-[var(--text-primary)]" 
-                  : "border-transparent text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]"
+                  ? "border-[var(--accent)] text-[var(--accent)] bg-[var(--accent)]/5" 
+                  : "border-transparent text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)]/20"
               )}
             >
               <tab.icon className="h-3.5 w-3.5" />
@@ -311,15 +311,16 @@ export function EditProfileModal({ profile, onClose }: EditProfileModalProps) {
                   </div>
 
                   <div className="space-y-3">
-                     <label className="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-[var(--text-tertiary)]">
-                       <LinkIcon className="h-3 w-3" /> Website
+                     <label className="flex items-center justify-between text-[9px] font-black uppercase tracking-widest text-[var(--text-tertiary)]">
+                       <span className="flex items-center gap-2"><LinkIcon className="h-3 w-3" /> Portfolio / Website</span>
+                       <span className="text-[8px] text-[var(--accent)]">Highly Recommended</span>
                      </label>
                      <input
                        type="url"
                        value={website}
                        onChange={(e) => setWebsite(e.target.value)}
-                       className="w-full bg-[var(--bg-tertiary)] border border-[var(--border)] rounded-[6px] px-4 py-3 text-sm text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent)] transition-all"
-                       placeholder="https://yourpage.com"
+                       className="w-full bg-[var(--bg-tertiary)] border border-[var(--border)] rounded-[6px] px-4 py-3 text-sm text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent)] transition-all font-medium"
+                       placeholder="https://yourportfolio.com"
                      />
                   </div>
 
@@ -365,23 +366,37 @@ export function EditProfileModal({ profile, onClose }: EditProfileModalProps) {
                   </div>
 
                   <div className="space-y-3">
-                    {socials.map((social, index) => (
-                      <div key={index} className="flex items-center justify-between p-4 bg-[var(--bg-tertiary)] border border-[var(--border)] rounded-[6px] group/social">
-                        <div className="flex items-center gap-3 overflow-hidden">
-                           <div className="p-2 bg-[var(--bg-secondary)] rounded-[6px] border border-[var(--border)]">
-                             <LinkIcon className="h-3.5 w-3.5 text-[var(--accent)]" />
-                           </div>
-                           <span className="text-xs font-bold text-[var(--text-secondary)] truncate">{social.url}</span>
+                    {socials.map((social, index) => {
+                      const lower = social.url.toLowerCase()
+                      let Icon = LinkIcon
+                      let label = 'Other'
+                      if (lower.includes('twitter.com') || lower.includes('x.com')) { Icon = Twitter; label = 'X' }
+                      else if (lower.includes('github.com')) { Icon = Github; label = 'GitHub' }
+                      else if (lower.includes('linkedin.com')) { Icon = Linkedin; label = 'LinkedIn' }
+                      else if (lower.includes('youtube.com')) { Icon = Youtube; label = 'YouTube' }
+                      else if (lower.includes('instagram.com')) { Icon = Instagram; label = 'Instagram' }
+
+                      return (
+                        <div key={index} className="flex items-center justify-between p-4 bg-[var(--bg-tertiary)] border border-[var(--border)] rounded-[6px] group/social hover:border-[var(--accent)] transition-all">
+                          <div className="flex items-center gap-4 overflow-hidden">
+                             <div className="p-2.5 bg-[var(--bg-secondary)] rounded-[6px] border border-[var(--border)] text-[var(--accent)]">
+                               <Icon className="h-4 w-4" />
+                             </div>
+                             <div className="overflow-hidden">
+                               <p className="text-[10px] font-black uppercase tracking-widest text-[var(--text-primary)]">{label}</p>
+                               <p className="text-[10px] font-bold text-[var(--text-tertiary)] truncate">{social.url}</p>
+                             </div>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => removeSocial(index)}
+                            className="p-2 hover:bg-rose-500/10 hover:text-rose-500 text-[var(--text-tertiary)] rounded-[4px] transition-all"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
                         </div>
-                        <button
-                          type="button"
-                          onClick={() => removeSocial(index)}
-                          className="p-1.5 hover:bg-rose-500/10 hover:text-rose-500 text-[var(--text-tertiary)] rounded-[4px] transition-all"
-                        >
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </button>
-                      </div>
-                    ))}
+                      )
+                    })}
                     {socials.length === 0 && (
                       <div className="py-12 border border-dashed border-[var(--border)] rounded-[6px] flex flex-col items-center justify-center opacity-40">
                          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--text-tertiary)]">No social links added</p>

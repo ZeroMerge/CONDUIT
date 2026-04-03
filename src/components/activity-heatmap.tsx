@@ -188,32 +188,56 @@ export function ActivityHeatmap({ completions }: ActivityHeatmapProps) {
       </div>
 
       {/* Legend & Filter Bar */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-6 pt-6 border-t border-[var(--border)]/50">
-        <div className="flex items-center gap-3 w-full sm:w-auto">
-          <span className="text-[9px] font-black text-[var(--text-tertiary)] uppercase tracking-widest">Temporal Filters</span>
-          <div className="flex gap-2">
-            {['2026', '2025'].map(year => (
-              <button 
-                key={year} 
+      <div className="space-y-6 pt-6 border-t border-[var(--border)]/50">
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center gap-3">
+            <span className="text-[9px] font-black text-[var(--text-tertiary)] uppercase tracking-widest">Jump to Month</span>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {monthLabels.map((m, i) => (
+              <button
+                key={i}
+                onClick={() => setViewIndex(m.index)}
                 className={cn(
-                  "px-4 py-1.5 rounded-full border text-[9px] font-black uppercase tracking-[0.15em] transition-all active:scale-95",
-                  year === '2026' 
-                    ? "bg-[var(--accent)]/10 border-[var(--accent)]/30 text-[var(--accent)]" 
-                    : "border-[var(--border)] text-[var(--text-tertiary)] hover:border-[var(--text-secondary)]"
+                  "px-3 py-1.5 rounded-[6px] border text-[9px] font-black uppercase tracking-[0.1em] transition-all active:scale-95",
+                  Math.abs(viewIndex - m.index) < 2
+                    ? "bg-[var(--accent)] text-white border-[var(--accent)] shadow-lg shadow-[var(--accent)]/20"
+                    : "bg-[var(--bg-tertiary)] border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--text-tertiary)]"
                 )}
               >
-                {year}
+                {m.label}
               </button>
             ))}
           </div>
         </div>
 
-        <div className="flex items-center gap-2.5 bg-[var(--bg-tertiary)]/50 px-4 py-2 rounded-full border border-[var(--border)] shadow-inner">
-          <span className="text-[9px] font-black text-[var(--text-tertiary)] uppercase tracking-widest mr-2">Signal Intensity</span>
-          <div className="flex gap-1.5">
-            {INTENSITY.map((cls, i) => (
-              <div key={i} className={cn("w-2 h-2 rounded-[1.5px] border border-black/10 dark:border-white/10 shadow-sm", cls)} />
-            ))}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
+          <div className="flex items-center gap-3 w-full sm:w-auto">
+            <span className="text-[9px] font-black text-[var(--text-tertiary)] uppercase tracking-widest">Year Filter</span>
+            <div className="flex gap-2">
+              {['2026', '2025'].map(year => (
+                <button 
+                  key={year} 
+                  className={cn(
+                    "px-4 py-1.5 rounded-[6px] border text-[9px] font-black uppercase tracking-[0.15em] transition-all active:scale-95",
+                    year === '2026' 
+                      ? "bg-[var(--accent)]/10 border-[var(--accent)]/30 text-[var(--accent)]" 
+                      : "border-[var(--border)] text-[var(--text-tertiary)] hover:border-[var(--text-secondary)]"
+                  )}
+                >
+                  {year}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2.5 bg-[var(--bg-tertiary)]/50 px-4 py-2 rounded-[6px] border border-[var(--border)] shadow-inner">
+            <span className="text-[9px] font-black text-[var(--text-tertiary)] uppercase tracking-widest mr-2">Signal Intensity</span>
+            <div className="flex gap-1.5">
+              {INTENSITY.map((cls, i) => (
+                <div key={i} className={cn("w-2 h-2 rounded-[1.5px] border border-black/10 dark:border-white/10 shadow-sm", cls)} />
+              ))}
+            </div>
           </div>
         </div>
       </div>
