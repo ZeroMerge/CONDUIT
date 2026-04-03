@@ -206,7 +206,7 @@ export function EditProfileModal({ profile, onClose }: EditProfileModalProps) {
         </div>
 
         {/* Dynamic Navigation Tabs */}
-        <div className="shrink-0 flex gap-2 px-6 border-b border-[var(--border)] bg-[var(--bg-secondary)]/30 overflow-x-auto no-scrollbar">
+        <div className="shrink-0 flex gap-0 sm:gap-2 px-2 sm:px-6 border-b border-[var(--border)] bg-[var(--bg-secondary)]/30 overflow-x-auto scrollbar-hide scroll-fade-r">
           {[
             { id: 'identity', label: 'Identity', icon: User },
             { id: 'socials', label: 'Socials', icon: LinkIcon },
@@ -216,7 +216,7 @@ export function EditProfileModal({ profile, onClose }: EditProfileModalProps) {
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
               className={cn(
-                "flex items-center gap-2 px-6 py-4 text-[9px] font-black uppercase tracking-[0.2em] border-b-2 transition-all whitespace-nowrap",
+                "flex items-center gap-2 px-4 sm:px-6 py-3 sm:py-4 text-[9px] font-black uppercase tracking-[0.15em] sm:tracking-[0.2em] border-b-2 transition-all whitespace-nowrap",
                 activeTab === tab.id 
                   ? "border-[var(--accent)] text-[var(--accent)] bg-[var(--accent)]/5" 
                   : "border-transparent text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)]/50"
@@ -240,8 +240,8 @@ export function EditProfileModal({ profile, onClose }: EditProfileModalProps) {
             <div className="md:col-span-4 lg:col-span-3 space-y-8 h-fit">
                <div className="flex flex-col items-center gap-6">
                 <div className="relative group/identity shrink-0">
-                  <div className="absolute inset-0 bg-[var(--accent)] opacity-10 rounded-full blur-2xl group-hover/identity:opacity-20 transition-opacity" />
-                  <Avatar seed={seed} size={200} bg_color={bgColor} className="w-[120px] h-[120px] sm:w-[160px] sm:h-[160px] rounded-full border-[2px] border-[var(--border)] shadow-2xl relative z-10 transition-transform duration-500 group-hover/identity:scale-[1.02]" />
+                  <div className="absolute inset-0 bg-[var(--accent)] opacity-10 rounded-[6px] blur-2xl group-hover/identity:opacity-20 transition-opacity" />
+                  <Avatar seed={seed} size={200} bg_color={bgColor} className="w-[120px] h-[120px] sm:w-[160px] sm:h-[160px] rounded-[6px] border-[2px] border-[var(--border)] shadow-2xl relative z-10 transition-transform duration-500 group-hover/identity:scale-[1.02]" />
                     <button
                       type="button"
                       onClick={handleShuffle}
@@ -263,7 +263,7 @@ export function EditProfileModal({ profile, onClose }: EditProfileModalProps) {
                       <span className="text-[9px] font-black uppercase tracking-widest text-[var(--text-tertiary)]">Character Score</span>
                       <span className={cn("text-[10px] font-black transition-colors", strength === 100 ? 'text-emerald-500' : 'text-[var(--accent)]')}>{strength}%</span>
                     </div>
-                    <div className="h-1.5 w-full bg-[var(--bg-tertiary)] rounded-full overflow-hidden shadow-inner border border-[var(--border)]">
+                    <div className="h-1.5 w-full bg-[var(--bg-tertiary)] rounded-[6px] overflow-hidden shadow-inner border border-[var(--border)]">
                       <div 
                         className={cn(
                           "h-full transition-all duration-1000 ease-out",
