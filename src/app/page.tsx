@@ -8,10 +8,10 @@ import { ArrowRight, Zap, Users, CheckCircle } from 'lucide-react'
 export default async function HomePage() {
   const supabase = await createClient()
 
-  const { count: flowCount }       = await supabase.from('flows').select('*',       { count: 'exact', head: true })
+  const { count: flowCount } = await supabase.from('flows').select('*', { count: 'exact', head: true })
   const { count: completionCount } = await supabase.from('completions').select('*', { count: 'exact', head: true })
-  const { count: profileCount }    = await supabase.from('profiles').select('*',    { count: 'exact', head: true })
-  const { data: trendingFlows }    = await supabase.from('flows').select('*').order('like_count', { ascending: false }).limit(6)
+  const { count: profileCount } = await supabase.from('profiles').select('*', { count: 'exact', head: true })
+  const { data: trendingFlows } = await supabase.from('flows').select('*').order('like_count', { ascending: false }).limit(6)
 
   return (
     <div className="page-container">
@@ -23,7 +23,7 @@ export default async function HomePage() {
         {/* Eyebrow */}
         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--accent-subtle)] border border-[var(--accent-border)] text-[var(--accent-text)] text-xs font-bold uppercase tracking-widest mb-6">
           <Zap className="h-3 w-3 fill-current" />
-          AI Workflow Execution Platform
+          GITHUB REPO FOR VERIFIED AI WORKFLOWS
         </div>
 
         {/* Headline — fluid size via CSS var */}

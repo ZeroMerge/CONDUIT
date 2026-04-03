@@ -2,10 +2,10 @@
 import { NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
+import { createClient } from '@/lib/supabase/server'
 import type { Database } from '@/lib/supabase/types'
 
 // Allowlist of fields the admin panel is permitted to update.
-// Add fields here as the admin grows — never expose arbitrary column writes.
 const ALLOWED_FIELDS = ['is_admin'] as const
 type AllowedField = (typeof ALLOWED_FIELDS)[number]
 
@@ -13,7 +13,7 @@ async function getAdminSupabase() {
   const cookieStore = await cookies()
   return createServerClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
     {
       cookies: {
         getAll() { return cookieStore.getAll() },
@@ -23,26 +23,30 @@ async function getAdminSupabase() {
   )
 }
 
-async function isAdmin(supabase: any): Promise<{ ok: boolean; userId?: string }> {
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return { ok: false }
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('is_admin')
-    .eq('id', user.id)
-    .single()
-  return { ok: profile?.is_admin === true, userId: user.id }
-}
-
 export async function POST(request: Request) {
   try {
-    const supabase = await getAdminSupabase()
-    const { ok, userId: adminId } = await isAdmin(supabase)
-
-    if (!ok) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
+    // 1. Identify User using standard client (cookies + anon key)
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    // 2. Check Admin status safely
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('is_admin')
+      .eq('id', user.id)
+      .maybeSingle()
+
+    if (profileError || !profile?.is_admin) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    }
+
+    const adminId = user.id
+
+    // 3. Process Payload
     const { userId, field, value } = await request.json()
 
     if (!userId || !field || value === undefined) {
@@ -62,16 +66,21 @@ export async function POST(request: Request) {
       )
     }
 
-    const { error } = await supabase
+    // 4. Perform Admin update using Service Role
+    const adminSupabase = await getAdminSupabase()
+    const { error: updateError } = await adminSupabase
       .from('profiles')
       .update({ [field]: value })
       .eq('id', userId)
 
-    if (error) throw error
+    if (updateError) throw updateError
 
     return NextResponse.json({ success: true, userId, field, value })
-  } catch (error) {
+  } catch (error: any) {
     console.error('Admin update-user error:', error)
-    return NextResponse.json({ error: 'Server error' }, { status: 500 })
+    return NextResponse.json(
+      { error: error.message || 'Server error' }, 
+      { status: 500 }
+    )
   }
 }
