@@ -28,7 +28,7 @@ export function CategoryFilter({ activeCategory = 'All' }: { activeCategory?: st
 
   return (
     <div className="relative -mx-4 px-4 sm:mx-0 sm:px-0">
-      <div className="flex gap-2.5 overflow-x-auto snap-x scrollbar-hide py-2">
+      <div className="flex gap-2.5 overflow-x-auto snap-x scrollbar-hide py-4 px-1">
         {CATEGORIES.map((category) => {
           const isActive = 
             category.toLowerCase() === activeCategory.toLowerCase() || 

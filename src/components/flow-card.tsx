@@ -19,10 +19,9 @@ export function FlowCard({ flow }: FlowCardProps) {
       href={`/flow/${flow.id}`}
       className="
         block group relative bg-[var(--bg-primary)] border border-[var(--border)]
-        hover:border-[var(--border-strong)] rounded-[24px] p-6
-        transition-all duration-300 press-scale
-        hover:shadow-[0_20px_50px_rgba(0,0,-1,0.08)] dark:hover:shadow-[0_20px_50px_rgba(0,0,0,0.5)]
-        hover:-translate-y-1
+        hover:border-[var(--border-strong)] rounded-[6px] p-5
+        transition-all duration-200 press-scale
+        hover:shadow-md dark:hover:shadow-[0_4px_20px_rgba(0,0,0,0.4)]
       "
     >
       <div className="flex justify-between items-start mb-3 gap-2">
@@ -42,20 +41,24 @@ export function FlowCard({ flow }: FlowCardProps) {
         {flow.description}
       </p>
 
-      <div className="flex items-center gap-6 pt-2">
-        <div className="flex items-center gap-1.5 min-w-0">
-          <Zap className="h-4 w-4 text-[var(--accent)]" />
-          <span className="text-sm font-semibold text-[var(--text-primary)]">{rCount}</span>
-        </div>
-        <div className="flex items-center gap-1.5 min-w-0">
-          <CheckCircle className="h-4 w-4 text-[var(--safe)]" />
-          <span className="text-sm font-semibold text-[var(--text-primary)]">
-            {completionRate !== null ? `${completionRate}%` : '--'}
+      <div className="flex items-center gap-4 pt-2 overflow-hidden">
+        <div className="flex items-center gap-1.5 min-w-0" title="Total runs">
+          <Zap className="h-3.5 w-3.5 text-[var(--accent)] shrink-0" />
+          <span className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-tight truncate">
+            {rCount} Runs
           </span>
         </div>
-        <div className="flex items-center gap-1.5 min-w-0">
-          <Clock className="h-4 w-4 text-[var(--text-tertiary)]" />
-          <span className="text-sm font-semibold text-[var(--text-primary)]">{flow.estimated_minutes}m</span>
+        <div className="flex items-center gap-1.5 min-w-0" title="Success rate">
+          <CheckCircle className="h-3.5 w-3.5 text-[var(--safe)] shrink-0" />
+          <span className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-tight truncate">
+            {completionRate !== null ? `${completionRate}%` : '--'} Success
+          </span>
+        </div>
+        <div className="flex items-center gap-1.5 min-w-0" title="Estimated time">
+          <Clock className="h-3.5 w-3.5 text-[var(--text-tertiary)] shrink-0" />
+          <span className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-tight truncate">
+            {flow.estimated_minutes}m Duration
+          </span>
         </div>
       </div>
 
