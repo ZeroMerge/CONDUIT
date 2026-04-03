@@ -110,7 +110,7 @@ export function FollowButton({ targetUserId, initialIsFollowing = false, classNa
       disabled={loading}
       className={cn(
         "inline-flex items-center justify-center transition-all disabled:opacity-70 disabled:cursor-not-allowed press-scale",
-        "px-3 sm:px-5 py-1.5 sm:py-2 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-[0.1em] sm:tracking-widest",
+        "px-3 sm:px-5 py-1.5 sm:py-2 rounded-[6px] text-[10px] sm:text-xs font-black uppercase tracking-[0.1em] sm:tracking-widest",
         isFollowing 
           ? 'bg-[var(--bg-secondary)] border border-[var(--border)] text-[var(--text-secondary)] hover:bg-rose-500/5 hover:text-rose-500 hover:border-rose-500/20 shadow-sm' 
           : 'bg-[var(--accent)] text-white hover:bg-[var(--accent-hover)] shadow-lg shadow-[var(--accent)]/15 border border-[var(--accent-hover)]/20',

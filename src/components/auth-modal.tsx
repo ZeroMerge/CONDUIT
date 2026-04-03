@@ -27,14 +27,14 @@ export function AuthModal({ isOpen, onClose, trigger }: AuthModalProps) {
         <Link
           href="/auth/signup"
           onClick={onClose}
-          className="bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-sm font-semibold px-4 py-3 rounded-xl text-center transition-colors shadow-lg shadow-[var(--accent)]/20 press-scale"
+          className="bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-sm font-semibold px-4 py-3 rounded-[6px] text-center transition-colors shadow-lg shadow-[var(--accent)]/20 press-scale"
         >
           Create account
         </Link>
         <Link
           href="/auth/signin"
           onClick={onClose}
-          className="bg-transparent border border-[var(--border)] hover:bg-[var(--bg-secondary)] text-[var(--text-primary)] text-sm font-semibold px-4 py-3 rounded-xl text-center transition-colors press-scale"
+          className="bg-transparent border border-[var(--border)] hover:bg-[var(--bg-secondary)] text-[var(--text-primary)] text-sm font-semibold px-4 py-3 rounded-[6px] text-center transition-colors press-scale"
         >
           Sign in
         </Link>

@@ -32,9 +32,9 @@ export function ProfileEditTrigger({ profile }: ProfileEditTriggerProps) {
   // During hydration, return a stable version without animations or dynamic classes
   if (!mounted) {
     return (
-      <button className="flex items-center gap-2 px-6 py-2.5 text-sm font-bold rounded-full bg-[var(--bg-secondary)] text-[var(--text-primary)] border border-[var(--border-strong)] opacity-50">
-        <Edit2 className="h-4 w-4 text-[var(--accent)]" /> 
-        Edit Profile
+      <button className="flex items-center justify-center gap-2 px-4 py-2.5 text-[11px] font-black uppercase tracking-widest rounded-[6px] bg-[var(--bg-secondary)] text-[var(--text-tertiary)] border border-[var(--border)] opacity-50">
+        <Edit2 className="h-3.5 w-3.5" /> 
+        Edit Identity
       </button>
     )
   }

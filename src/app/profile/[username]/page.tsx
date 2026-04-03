@@ -240,13 +240,13 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
                 </p>
               )}
               <div className="flex justify-start">
-                   <div className={cn(
-                     "inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--accent-subtle)] border border-[var(--accent-border)] text-[var(--accent-text)] text-xs font-bold uppercase tracking-widest transition-all hover:scale-[1.02] active:scale-[0.98]",
-                     tier.color
-                   )}>
-                     <tier.icon className="h-3 w-3 fill-current" />
-                     {tier.name}
-                   </div>
+                    <div className={cn(
+                      "inline-flex items-center gap-2 px-3 py-1.5 rounded-[6px] bg-[var(--accent-subtle)] border border-[var(--accent-border)] text-[var(--accent-text)] text-[9px] font-black uppercase tracking-widest transition-all hover:scale-[1.02] active:scale-[0.98]",
+                      tier.color
+                    )}>
+                      <tier.icon className="h-3 w-3 fill-current" />
+                      {tier.name}
+                    </div>
                 </div>
               </div>
 
@@ -331,21 +331,21 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
               <h4 className="text-[9px] font-black text-[var(--text-tertiary)] uppercase tracking-[0.2em] opacity-60">Status Medals</h4>
               <div className="flex flex-wrap gap-3">
                  {/* Early Bird Medal */}
-                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-500/20 to-amber-600/5 border border-amber-500/20 flex items-center justify-center relative group/badge shadow-[inset_0_-1px_2px_rgba(0,0,0,0.2),inset_0_1px_2px_rgba(255,255,255,0.1),0_4px_12px_rgba(217,119,6,0.15)] hover:scale-110 hover:-translate-y-0.5 transition-all duration-500" title="Early Bird // Wave Signal">
-                    <div className="absolute inset-0 rounded-full bg-amber-500/10 blur-[8px] group-hover/badge:blur-[12px] opacity-0 group-hover/badge:opacity-100 transition-all" />
-                    <Flame className="h-4 w-4 text-amber-500 drop-shadow-[0_2px_4px_rgba(217,119,6,0.4)] relative z-10" strokeWidth={2.5} />
-                 </div>
+                  <div className="w-10 h-10 rounded-[6px] bg-gradient-to-br from-amber-500/20 to-amber-600/5 border border-amber-500/20 flex items-center justify-center relative group/badge shadow-[inset_0_-1px_2px_rgba(0,0,0,0.2),inset_0_1px_2px_rgba(255,255,255,0.1),0_4px_12px_rgba(217,119,6,0.15)] hover:scale-110 hover:-translate-y-0.5 transition-all duration-500" title="Early Bird // Wave Signal">
+                     <div className="absolute inset-0 rounded-[6px] bg-amber-500/10 blur-[8px] group-hover/badge:blur-[12px] opacity-0 group-hover/badge:opacity-100 transition-all" />
+                     <Flame className="h-4 w-4 text-amber-500 drop-shadow-[0_2px_4px_rgba(217,119,6,0.4)] relative z-10" strokeWidth={2.5} />
+                  </div>
 
                  {/* System Lead Medal */}
-                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500/20 to-emerald-600/5 border border-emerald-500/20 flex items-center justify-center relative group/badge shadow-[inset_0_-1px_2px_rgba(0,0,0,0.2),inset_0_1px_2px_rgba(255,255,255,0.1),0_4px_12px_rgba(16,185,129,0.15)] hover:scale-110 hover:-translate-y-0.5 transition-all duration-500" title="System Lead // High Voltage">
-                    <div className="absolute inset-0 rounded-full bg-emerald-500/10 blur-[8px] group-hover/badge:blur-[12px] opacity-0 group-hover/badge:opacity-100 transition-all" />
-                    <Zap className="h-4 w-4 text-emerald-500 drop-shadow-[0_2px_4px_rgba(16,185,129,0.4)] relative z-10 fill-emerald-500/20" strokeWidth={2.5} />
-                 </div>
+                  <div className="w-10 h-10 rounded-[6px] bg-gradient-to-br from-emerald-500/20 to-emerald-600/5 border border-emerald-500/20 flex items-center justify-center relative group/badge shadow-[inset_0_-1px_2px_rgba(0,0,0,0.2),inset_0_1px_2px_rgba(255,255,255,0.1),0_4px_12px_rgba(16,185,129,0.15)] hover:scale-110 hover:-translate-y-0.5 transition-all duration-500" title="System Lead // High Voltage">
+                     <div className="absolute inset-0 rounded-[6px] bg-emerald-500/10 blur-[8px] group-hover/badge:blur-[12px] opacity-0 group-hover/badge:opacity-100 transition-all" />
+                     <Zap className="h-4 w-4 text-emerald-500 drop-shadow-[0_2px_4px_rgba(16,185,129,0.4)] relative z-10 fill-emerald-500/20" strokeWidth={2.5} />
+                  </div>
 
                  {/* Architect Medal (Locked/Ghost) */}
-                 <div className="w-10 h-10 rounded-full border border-dashed border-[var(--border)] flex items-center justify-center group/badge opacity-30 hover:opacity-80 transition-all hover:scale-105" title="Epic Architect // Pending Progression">
-                    <Trophy className="h-3.5 w-3.5 text-[var(--text-tertiary)]" />
-                 </div>
+                  <div className="w-10 h-10 rounded-[6px] border border-dashed border-[var(--border)] flex items-center justify-center group/badge opacity-30 hover:opacity-80 transition-all hover:scale-105" title="Epic Architect // Pending Progression">
+                     <Trophy className="h-3.5 w-3.5 text-[var(--text-tertiary)]" />
+                  </div>
               </div>
             </div>
           </aside>
@@ -362,7 +362,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
                     </div>
                     <h3 className="text-[10px] font-black uppercase tracking-[0.25em] text-[var(--text-primary)]">System Overview</h3>
                  </div>
-                 <Link href={`/resume/${p.username}`} className="group flex items-center gap-2 px-4 py-2 rounded-full border border-[var(--border)] hover:border-[var(--accent)] hover:bg-[var(--accent)]/5 transition-all">
+                 <Link href={`/resume/${p.username}`} className="group flex items-center gap-2 px-4 py-2 rounded-[6px] border border-[var(--border)] hover:border-[var(--accent)] hover:bg-[var(--accent)]/5 transition-all">
                     <span className="text-[9px] font-black uppercase tracking-widest text-[var(--text-tertiary)] group-hover:text-[var(--accent)] transition-colors">Resume</span>
                     <ArrowUpRight className="h-3 w-3 text-[var(--accent)] transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                  </Link>

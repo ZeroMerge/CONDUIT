@@ -26,7 +26,7 @@ export function FlowCard({ flow }: FlowCardProps) {
     >
       <div className="flex justify-between items-start mb-3 gap-2">
         <div className="flex items-center gap-1.5 max-w-full overflow-hidden">
-          <span className="bg-[var(--bg-secondary)] border border-[var(--border)] text-[var(--text-secondary)] text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md truncate max-w-[80px]">
+          <span className="bg-[var(--bg-secondary)] border border-[var(--border)] text-[var(--text-secondary)] text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-[6px] truncate max-w-[80px]">
             {flow.category}
           </span>
           <TrustBadge status={flow.status} size="sm" />
@@ -63,7 +63,7 @@ export function FlowCard({ flow }: FlowCardProps) {
       </div>
 
       {flow.like_count > 0 && (
-         <div className="absolute top-4 right-4 flex items-center gap-1 text-[10px] font-bold text-[var(--text-secondary)] bg-[var(--bg-secondary)] px-2 py-0.5 rounded-full border border-[var(--border)]">
+         <div className="absolute top-4 right-4 flex items-center gap-1 text-[10px] font-bold text-[var(--text-secondary)] bg-[var(--bg-secondary)] px-2 py-0.5 rounded-[6px] border border-[var(--border)]">
            <Flame className="h-3 w-3 text-orange-500 fill-orange-500/20" /> {flow.like_count}
          </div>
       )}

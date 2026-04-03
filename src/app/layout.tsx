@@ -68,7 +68,7 @@ export default function RootLayout({
                   background: 'var(--bg-primary)',
                   border: '1px solid var(--border)',
                   color: 'var(--text-primary)',
-                  borderRadius: '12px',
+                  borderRadius: '6px',
                   boxShadow: '0 10px 40px -10px rgba(0,0,0,0.1)',
                 },
               }}

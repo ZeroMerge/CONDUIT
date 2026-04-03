@@ -88,7 +88,7 @@ export function BottomSheet({
           // Base
           'fixed z-[71] bg-[var(--bg-primary)] border border-[var(--border)]',
           // Mobile: slide up from bottom, full width
-          'bottom-0 left-0 right-0 rounded-t-3xl sm:hidden',
+          'bottom-0 left-0 right-0 rounded-t-[12px] sm:hidden',
           'animate-slide-up',
           // Safe area
           'pb-safe',
@@ -104,7 +104,7 @@ export function BottomSheet({
         {title && (
           <div className="flex items-center justify-between px-5 pb-4">
             <h2 className="text-base font-geist font-semibold text-[var(--text-primary)]">{title}</h2>
-            <button onClick={onClose} className="touch-target rounded-lg hover:bg-[var(--bg-secondary)] transition-colors" aria-label="Close">
+            <button onClick={onClose} className="touch-target rounded-[6px] hover:bg-[var(--bg-secondary)] transition-colors" aria-label="Close">
               <X className="h-5 w-5 text-[var(--text-tertiary)]" />
             </button>
           </div>
@@ -112,7 +112,7 @@ export function BottomSheet({
         {!title && (
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 touch-target rounded-lg hover:bg-[var(--bg-secondary)] transition-colors"
+            className="absolute top-4 right-4 touch-target rounded-[6px] hover:bg-[var(--bg-secondary)] transition-colors"
             aria-label="Close"
           >
             <X className="h-5 w-5 text-[var(--text-tertiary)]" />
@@ -129,7 +129,7 @@ export function BottomSheet({
           aria-modal="true"
           aria-label={title}
           className={cn(
-            'bg-[var(--bg-primary)] border border-[var(--border)] rounded-2xl shadow-2xl w-full pointer-events-auto animate-scale-in',
+            'bg-[var(--bg-primary)] border border-[var(--border)] rounded-[6px] shadow-2xl w-full pointer-events-auto animate-scale-in',
             maxWidth,
           )}
         >
@@ -137,7 +137,7 @@ export function BottomSheet({
           {title && (
             <div className="flex items-center justify-between p-6 border-b border-[var(--border)]">
               <h2 className="text-lg font-geist font-semibold text-[var(--text-primary)]">{title}</h2>
-              <button onClick={onClose} className="touch-target rounded-lg hover:bg-[var(--bg-secondary)] transition-colors" aria-label="Close">
+              <button onClick={onClose} className="touch-target rounded-[6px] hover:bg-[var(--bg-secondary)] transition-colors" aria-label="Close">
                 <X className="h-5 w-5 text-[var(--text-tertiary)]" />
               </button>
             </div>

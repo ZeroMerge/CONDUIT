@@ -32,7 +32,7 @@ export function TrustBadge({ status, size = 'md' }: TrustBadgeProps) {
   const textSize = size === 'sm' ? 'text-xs' : 'text-sm'
 
   return (
-    <span className={`inline-flex items-center gap-1.5 ${textSize} font-medium ${padding} rounded border ${className}`}>
+    <span className={`inline-flex items-center gap-1.5 ${textSize} font-medium ${padding} rounded-[6px] border ${className}`}>
       <Icon className={iconSize} />
       {text}
     </span>

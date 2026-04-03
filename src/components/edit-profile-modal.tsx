@@ -177,14 +177,14 @@ export function EditProfileModal({ profile, onClose }: EditProfileModalProps) {
   if (!mounted) return null
 
   return createPortal(
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 md:p-10 overflow-hidden selection:bg-[var(--accent)]/30">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center sm:p-6 md:p-10 overflow-hidden selection:bg-[var(--accent)]/30">
       {/* Backdrop with theme-aware blur */}
       <div 
-        className="absolute inset-0 bg-white/95 dark:bg-black/90 backdrop-blur-2xl transition-all duration-500 animate-in fade-in"
+        className="absolute inset-0 bg-white/95 dark:bg-black/90 backdrop-blur-2xl transition-all duration-500 animate-in fade-in sm:rounded-[6px]"
         onClick={onClose}
       />
 
-      <div className="relative w-full max-w-4xl bg-[var(--bg-primary)] border border-[var(--border)] rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden animate-scale-in">
+      <div className="relative w-full h-full sm:h-auto sm:w-[95vw] md:w-[85vw] lg:w-[75vw] max-w-4xl bg-[var(--bg-primary)] border-0 sm:border border-[var(--border)] rounded-none sm:rounded-[6px] shadow-2xl flex flex-col sm:max-h-[90vh] overflow-hidden animate-scale-in">
         
         {/* Fixed Header */}
         <div className="shrink-0 flex items-center justify-between px-6 py-4 border-b border-[var(--border)] bg-[var(--bg-primary)]/80 backdrop-blur-md">
@@ -199,7 +199,7 @@ export function EditProfileModal({ profile, onClose }: EditProfileModalProps) {
           </div>
           <button 
             onClick={onClose}
-            className="p-2 hover:bg-[var(--bg-secondary)] rounded-full transition-all text-[var(--text-tertiary)] active:rotate-90"
+            className="p-2 hover:bg-[var(--bg-secondary)] rounded-[6px] transition-all text-[var(--text-tertiary)] active:rotate-90 border border-[var(--border)] sm:border-0"
           >
             <X className="h-5 w-5" />
           </button>
@@ -242,14 +242,14 @@ export function EditProfileModal({ profile, onClose }: EditProfileModalProps) {
                 <div className="relative group/identity shrink-0">
                   <div className="absolute inset-0 bg-[var(--accent)] opacity-10 rounded-full blur-2xl group-hover/identity:opacity-20 transition-opacity" />
                   <Avatar seed={seed} size={200} bg_color={bgColor} className="w-[120px] h-[120px] sm:w-[160px] sm:h-[160px] rounded-full border-[2px] border-[var(--border)] shadow-2xl relative z-10 transition-transform duration-500 group-hover/identity:scale-[1.02]" />
-                  <button
-                    type="button"
-                    onClick={handleShuffle}
-                    className="absolute -bottom-2 -right-2 z-20 bg-[var(--accent)] text-white p-2.5 rounded-[8px] shadow-2xl hover:scale-110 active:scale-95 transition-all outline-none border-[1.5px] border-[var(--bg-primary)] group/btn"
-                    title="Generate New Soul"
-                  >
-                    <RefreshCw className="h-4 w-4 group-active/btn:rotate-180 transition-transform duration-500" />
-                  </button>
+                    <button
+                      type="button"
+                      onClick={handleShuffle}
+                      className="absolute -bottom-2 -right-2 z-20 bg-[var(--accent)] text-white p-2.5 rounded-[6px] shadow-2xl hover:scale-110 active:scale-95 transition-all outline-none border-[1.5px] border-[var(--bg-primary)] group/btn"
+                      title="Generate New Soul"
+                    >
+                      <RefreshCw className="h-4 w-4 group-active/btn:rotate-180 transition-transform duration-500" />
+                    </button>
                 </div>
 
                 <div className="w-full space-y-6 pt-2">
@@ -274,7 +274,7 @@ export function EditProfileModal({ profile, onClose }: EditProfileModalProps) {
                         style={{ width: `${strength}%` }}
                       />
                     </div>
-                    <div className="mt-3 flex items-center gap-2 justify-center py-1.5 px-3 bg-[var(--bg-secondary)] rounded-[4px] border border-[var(--border)]">
+                    <div className="mt-3 flex items-center gap-2 justify-center py-1.5 px-3 bg-[var(--bg-secondary)] rounded-[6px] border border-[var(--border)]">
                        <Sparkles className="h-3 w-3 text-amber-500" />
                        <span className="text-[8px] font-black uppercase tracking-widest text-[var(--text-tertiary)]">Growth Potential Active</span>
                     </div>
@@ -346,7 +346,7 @@ export function EditProfileModal({ profile, onClose }: EditProfileModalProps) {
                        <span className="flex items-center gap-2"><Globe className="h-3 w-3" /> Professional Resume Link</span>
                      </label>
                      <div className="relative group/input">
-                        <div className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-[var(--bg-tertiary)] rounded-[4px] border border-[var(--border)] group-focus-within/input:border-[var(--accent)]/50 transition-colors">
+                        <div className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-[var(--bg-tertiary)] rounded-[6px] border border-[var(--border)] group-focus-within/input:border-[var(--accent)]/50 transition-colors">
                            <Globe className="h-3 w-3 text-[var(--text-tertiary)]" />
                         </div>
                         <input
@@ -364,7 +364,7 @@ export function EditProfileModal({ profile, onClose }: EditProfileModalProps) {
                        <label className="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-[var(--text-tertiary)] opacity-60">
                          <FileText className="h-3 w-3" /> Identity Documentation (README)
                        </label>
-                       <div className="px-2 py-0.5 rounded-[4px] bg-amber-500/10 border border-amber-500/20 text-[7px] font-black uppercase text-amber-500">30% Energy Gain</div>
+                       <div className="px-2 py-0.5 rounded-[6px] bg-amber-500/10 border border-amber-500/20 text-[7px] font-black uppercase text-amber-500">30% Energy Gain</div>
                     </div>
                     <div className="border border-[var(--border)] rounded-[6px] overflow-hidden bg-[var(--bg-tertiary)]/30 group-within:border-[var(--accent)]/50 transition-all">
                        <div className="flex items-center gap-2 px-4 py-2 border-b border-[var(--border)] bg-[var(--bg-secondary)]/50">
@@ -384,7 +384,7 @@ export function EditProfileModal({ profile, onClose }: EditProfileModalProps) {
 
               {activeTab === 'socials' && (
                 <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
-                  <div className="bg-[var(--bg-tertiary)]/30 border border-[var(--border)] rounded-[8px] p-5 space-y-4">
+                  <div className="bg-[var(--bg-tertiary)]/30 border border-[var(--border)] rounded-[6px] p-4 sm:p-5 space-y-4">
                      <p className="text-[10px] font-black text-[var(--text-tertiary)] uppercase tracking-[0.1em] opacity-80 leading-relaxed">
                        Integrate Third-Party Signal Channels (Max 4)
                      </p>
@@ -437,19 +437,19 @@ export function EditProfileModal({ profile, onClose }: EditProfileModalProps) {
                                <p className="text-[9px] font-bold text-[var(--text-tertiary)] truncate tracking-tight">{social.url.replace(/^https?:\/\//, '')}</p>
                              </div>
                           </div>
-                          <button
-                            type="button"
-                            onClick={() => removeSocial(index)}
-                            className="p-1.5 hover:bg-rose-500/10 hover:text-rose-500 text-[var(--text-tertiary)] rounded-[4px] transition-all opacity-0 group-hover/s:opacity-100"
-                            title="Unlink"
-                          >
-                            <Trash2 className="h-3.5 w-3.5" />
-                          </button>
+                            <button
+                              type="button"
+                              onClick={() => removeSocial(index)}
+                              className="p-1.5 hover:bg-rose-500/10 hover:text-rose-500 text-[var(--text-tertiary)] rounded-[6px] transition-all opacity-0 group-hover/s:opacity-100"
+                              title="Unlink"
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </button>
                         </div>
                       )
                     })}
                     {socials.length === 0 && (
-                      <div className="col-span-full py-10 border border-dashed border-[var(--border)] rounded-[8px] flex flex-col items-center justify-center opacity-20 group/empty hover:opacity-40 transition-opacity">
+                      <div className="col-span-full py-10 border border-dashed border-[var(--border)] rounded-[6px] flex flex-col items-center justify-center opacity-20 group/empty hover:opacity-40 transition-opacity">
                          <Workflow className="h-6 w-6 mb-2 group-hover/empty:animate-bounce" />
                          <p className="text-[9px] font-black uppercase tracking-[0.2em] text-[var(--text-tertiary)]">Signal Registry Empty</p>
                       </div>
@@ -526,11 +526,11 @@ export function EditProfileModal({ profile, onClose }: EditProfileModalProps) {
         </form>
 
         {/* Fixed Footer Action Bar */}
-        <div className="shrink-0 p-4 sm:p-6 border-t border-[var(--border)] bg-[var(--bg-primary)]/90 backdrop-blur-sm flex items-center justify-between gap-4">
+        <div className="shrink-0 p-4 sm:p-5 border-t border-[var(--border)] bg-[var(--bg-primary)]/90 backdrop-blur-sm flex flex-col-reverse sm:flex-row items-center justify-between gap-3 sm:gap-4">
           <button
             type="button"
             onClick={onClose}
-            className="px-6 py-2.5 text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+            className="w-full sm:w-auto px-6 py-2.5 text-[10px] font-black uppercase tracking-widest text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
           >
             DISCARD
           </button>
@@ -539,13 +539,13 @@ export function EditProfileModal({ profile, onClose }: EditProfileModalProps) {
             type="submit"
             form="profile-edit-form"
             disabled={loading}
-            className="flex-1 max-w-lg flex items-center justify-center gap-2 bg-[var(--accent)] hover:bg-[var(--accent-hover)] disabled:opacity-50 text-white font-bold py-3.5 px-6 rounded-xl transition-all shadow-lg shadow-[var(--accent)]/20 active:scale-[0.98]"
+            className="w-full sm:w-auto sm:min-w-[200px] flex items-center justify-center gap-2 bg-[var(--accent)] hover:bg-[var(--accent-hover)] disabled:opacity-50 text-white font-black text-[10px] uppercase tracking-widest py-3 sm:py-2.5 px-6 rounded-[6px] transition-all shadow-lg shadow-[var(--accent)]/10 active:scale-[0.98]"
           >
             {loading ? (
-              <div className="h-5 w-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
             ) : (
               <>
-                <Save className="h-5 w-5" />
+                <Save className="h-4 w-4" />
                 COMMIT IDENTITY CHANGES
               </>
             )}

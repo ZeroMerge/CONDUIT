@@ -95,7 +95,7 @@ export function ActivityHeatmap({ completions }: ActivityHeatmapProps) {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-           <div className="p-2 bg-[var(--bg-tertiary)] rounded-[8px] border border-[var(--border)] shadow-sm">
+           <div className="p-2 bg-[var(--bg-tertiary)] rounded-[6px] border border-[var(--border)] shadow-sm">
              <Calendar className="h-4 w-4 text-[var(--accent)]" />
            </div>
            <div>

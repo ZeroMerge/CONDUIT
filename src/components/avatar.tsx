@@ -23,7 +23,7 @@ export function Avatar({ seed, size = 32, verified = false, bg_color = 'transpar
     >
       <div 
         className={cn(
-          "w-full h-full rounded-full overflow-hidden transition-all duration-500 flex items-center justify-center",
+          "w-full h-full rounded-[6px] overflow-hidden transition-all duration-500 flex items-center justify-center",
           verified && "ring-2 ring-[var(--verified)] ring-offset-2 ring-offset-[var(--bg-primary)] shadow-lg shadow-[var(--verified)]/10"
         )}
         style={{ backgroundColor: bg_color || 'transparent' }}
@@ -33,7 +33,7 @@ export function Avatar({ seed, size = 32, verified = false, bg_color = 'transpar
           alt="Avatar"
           width={size}
           height={size}
-          className="w-full h-full object-cover rounded-full group-hover:scale-105 transition-transform duration-500"
+          className="w-full h-full object-cover rounded-[6px] group-hover:scale-105 transition-transform duration-500"
         />
       </div>
       {verified && (
