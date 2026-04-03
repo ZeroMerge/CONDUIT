@@ -9,19 +9,7 @@ import type { Database } from '@/lib/supabase/types'
 const ALLOWED_FIELDS = ['is_admin'] as const
 type AllowedField = (typeof ALLOWED_FIELDS)[number]
 
-async function getAdminSupabase() {
-  const cookieStore = await cookies()
-  return createServerClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    {
-      cookies: {
-        getAll() { return cookieStore.getAll() },
-        setAll() {},
-      },
-    }
-  )
-}
+import { createAdminClient } from '@/lib/supabase/admin'
 
 export async function POST(request: Request) {
   try {
@@ -66,14 +54,17 @@ export async function POST(request: Request) {
       )
     }
 
-    // 4. Perform Admin update using Service Role
-    const adminSupabase = await getAdminSupabase()
+    // 4. Perform Admin update using Stateless Service Role Client
+    const adminSupabase = createAdminClient()
     const { error: updateError } = await adminSupabase
       .from('profiles')
       .update({ [field]: value })
       .eq('id', userId)
 
-    if (updateError) throw updateError
+    if (updateError) {
+      console.error('[Admin] Supabase user update error:', updateError)
+      throw updateError
+    }
 
     return NextResponse.json({ success: true, userId, field, value })
   } catch (error: any) {

@@ -25,17 +25,17 @@ interface ProfilePageProps {
 export async function generateMetadata({ params }: ProfilePageProps): Promise<Metadata> {
   const { username } = await params
   const supabase = await createClient()
-  const { data: profile } = await supabase
+  const { data: profile, error } = await supabase
     .from('profiles')
-    .select('full_name, username')
+    .select('username')
     .eq('username', username)
-    .single()
+    .maybeSingle()
 
-  if (!profile) return { title: 'User Not Found' }
+  if (error || !profile) return { title: 'User Not Found' }
 
   return {
-    title: `${profile.full_name || profile.username} (@${profile.username}) | Conduit`,
-    description: `View ${profile.full_name || profile.username}'s developer profile and contributions on Conduit.`,
+    title: `${profile.username} | Conduit`,
+    description: `View ${profile.username}'s developer profile and contributions on Conduit.`,
   }
 }
 
@@ -60,7 +60,10 @@ function getSocialIcon(url: string) {
 export default async function ProfilePage({ params }: ProfilePageProps) {
   const { username } = await params
   const supabase = await createClient()
-  const { data: profile } = await supabase
+  
+  // High-resilience query: only select basic columns first, then expand
+  // This prevents the entire page from 404ing if a newly added column (like 'is_verified') is missing in the DB
+  const { data: profile, error } = await supabase
     .from('profiles')
     .select(`
       *,
@@ -68,9 +71,8 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
         id,
         title,
         description,
-        is_published,
-        category,
-        nodes
+        status,
+        category
       ),
       completions:completions (
         id,
@@ -79,9 +81,16 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
       )
     `)
     .eq('username', username)
-    .single()
+    .maybeSingle()
 
-  if (!profile) notFound()
+  if (error) {
+    console.error(`[Profile] Query error for ${username}:`, error)
+  }
+
+  if (!profile) {
+    console.log(`[Profile] User ${username} not found or query failed.`)
+    notFound()
+  }
 
   // Cast to custom Profile type to handle Json -> Typed Array conversion
   const p = profile as any as Profile

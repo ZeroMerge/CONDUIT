@@ -5,19 +5,7 @@ import { cookies } from 'next/headers'
 import { createClient } from '@/lib/supabase/server'
 import type { Database } from '@/lib/supabase/types'
 
-async function getAdminSupabase() {
-  const cookieStore = await cookies()
-  return createServerClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    {
-      cookies: {
-        getAll() { return cookieStore.getAll() },
-        setAll() {},
-      },
-    }
-  )
-}
+import { createAdminClient } from '@/lib/supabase/admin'
 
 export async function DELETE(request: Request) {
   try {
@@ -47,14 +35,17 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ error: 'flowId is required' }, { status: 400 })
     }
 
-    // 4. Perform Admin delete using Service Role
-    const adminSupabase = await getAdminSupabase()
+    // 4. Perform Admin delete using Stateless Service Role Client
+    const adminSupabase = createAdminClient()
     const { error: deleteError } = await adminSupabase
       .from('flows')
       .delete()
       .eq('id', flowId)
 
-    if (deleteError) throw deleteError
+    if (deleteError) {
+      console.error('[Admin] Supabase delete error:', deleteError)
+      throw deleteError
+    }
 
     return NextResponse.json({ success: true, flowId })
   } catch (error: any) {

@@ -5,19 +5,7 @@ import { cookies } from 'next/headers'
 import { createClient } from '@/lib/supabase/server'
 import type { Database } from '@/lib/supabase/types'
 
-async function getAdminSupabase() {
-  const cookieStore = await cookies()
-  return createServerClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    {
-      cookies: {
-        getAll() { return cookieStore.getAll() },
-        setAll() {},
-      },
-    }
-  )
-}
+import { createAdminClient } from '@/lib/supabase/admin'
 
 export async function POST(request: Request) {
   try {
@@ -47,20 +35,30 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Invalid payload' }, { status: 400 })
     }
 
-    // 4. Perform Admin update using Service Role
-    const adminSupabase = await getAdminSupabase()
+    console.log(`[Admin] Updating flow ${flowId} status to ${status}...`)
+
+    // 4. Perform Admin update using Stateless Service Role Client
+    const adminSupabase = createAdminClient()
     const { error: updateError } = await adminSupabase
       .from('flows')
       .update({ status })
       .eq('id', flowId)
 
-    if (updateError) throw updateError
+    if (updateError) {
+      console.error('[Admin] Supabase update error:', updateError)
+      throw updateError
+    }
+
+    console.log(`[Admin] Successfully updated flow ${flowId}`)
 
     return NextResponse.json({ success: true, flowId, status })
   } catch (error: any) {
     console.error('Admin verify-flow error:', error)
     return NextResponse.json(
-      { error: error.message || 'Server error' }, 
+      { 
+        error: error.message || 'Server error',
+        details: error.code || undefined
+      }, 
       { status: 500 }
     )
   }
