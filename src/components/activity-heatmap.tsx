@@ -142,8 +142,8 @@ export function ActivityHeatmap({ completions }: ActivityHeatmapProps) {
               ))}
             </div>
 
-            {/* X-Axis: Weeks Grid */}
-            <div className="relative flex-1">
+            {/* Heatmap Grid (X-axis Scrollable) */}
+            <div className="relative flex-1 overflow-hidden">
               {/* Month Labels overlay */}
               <div className="absolute -top-7 left-0 w-full flex h-4 pointer-events-none">
                 {monthLabels.map((m, i) => {
@@ -153,14 +153,15 @@ export function ActivityHeatmap({ completions }: ActivityHeatmapProps) {
                   return (
                     <span 
                       key={i} 
-                      className="text-[10px] font-black text-[var(--accent)] absolute uppercase tracking-[0.15em] transition-all duration-700 ease-out"
+                      className="text-[10px] font-black text-[var(--accent)] absolute uppercase tracking-[0.15em] transition-all duration-700 ease-out z-20 group/month cursor-default select-none"
                       style={{ 
                         left: `${xPos}px`, 
                         opacity: xPos < 0 ? 0 : 0.8,
-                        textShadow: '0 0 12px var(--accent-border)'
+                        transform: `translateX(${xPos < 0 ? -10 : 0}px)`
                       }}
                     >
-                      {m.label}
+                      <span className="group-hover/month:text-white transition-colors">{m.label}</span>
+                      <div className="h-[2px] w-4 bg-[var(--accent)] mt-0.5 opacity-40 group-hover/month:w-full group-hover/month:opacity-100 transition-all duration-500" />
                     </span>
                   )
                 })}

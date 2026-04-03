@@ -503,8 +503,8 @@ export function EditProfileModal({ profile, onClose }: EditProfileModalProps) {
           </div>
         </form>
 
-        {/* Footer: Compressed Action Bar */}
-        <div className="flex items-center gap-3 p-4 sm:p-6 border-t border-[var(--border)] bg-[var(--bg-secondary)]/80 shrink-0">
+        {/* Footer: Compressed Action Bar - Stabilized with Solid Background and Shadow */}
+        <div className="flex items-center gap-3 p-4 sm:p-6 border-t border-[var(--border)] bg-[var(--bg-secondary)] shadow-[0_-10px_30px_rgba(0,0,0,0.2)] shrink-0 z-50">
           <button
             type="button"
             onClick={onClose}
